@@ -1,0 +1,11 @@
+.column-wrapper{
+    height: 74vh;
+}
+.wrapper-scroll{
+    position: relative;
+}
+@media (max-height: 980px){
+    .column-wrapper {
+        max-height: 560px;
+    }
+}

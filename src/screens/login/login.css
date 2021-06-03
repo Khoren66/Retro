@@ -1,0 +1,25 @@
+.admin-login-wrapper {
+    background-color: #ffffff;
+    padding: 1rem 1.5rem;
+    margin: 0 auto;
+    height: 82vh;
+    display: flex;
+    justify-content: center
+}
+@media (max-height: 980px){
+    .admin-login-wrapper {
+        max-height: 630px;
+    }
+}
+
+.ant-input{
+    width: 200px;
+    margin-bottom: 10px;
+}
+
+.login-form-button{
+    background-color: rgb(243, 246, 247);
+    border-radius: 10px;
+    width: 80px;
+    height: 25px;
+}

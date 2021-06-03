@@ -1,0 +1,26 @@
+.admin-wrapper {
+  border-radius: 5px;
+  height: 82vh;
+}
+.center {
+  justify-content: center;
+}
+.right-end {
+  justify-content: flex-end;
+}
+.log-out{
+    height: 50px;
+    border-radius: 0 0 0 20px;
+}
+.table-scroll{
+  height: 93.7%;
+  overflow-y: scroll;
+}
+@media (max-height: 980px) {
+  .admin-wrapper {
+    max-height: 630px;
+  }
+  .table-scroll{
+    height: 92%;
+  }
+}

@@ -1,0 +1,51 @@
+.ant-col-8 {
+  /* padding-left: 0 !important;
+    
+    padding-right: 0 !important; */
+  padding: "10px" !important;
+  display: flex !important;
+}
+.board-columns {
+  display: flex;
+  background-color: #f3f3f3;
+}
+.wrapper-scroll {
+  overflow-y: scroll;
+  height: 92%;
+}
+.went-well {
+  background-color: #60d060 !important;
+}
+.to-improve {
+  background-color: #ee3232;
+  color: #f3f6f7;
+}
+.actions {
+  background-color: #6796ec;
+  color: #f3f6f7;
+}
+.card-style {
+  margin: 10px;
+  border-radius: 15px;
+}
+.column-style {
+  /* position: absolute; */
+  width: 33%;
+  margin: 10px;
+}
+.text-field {
+  border-radius: 15px;
+  margin-top: 10px;
+  padding-right: 35px;
+}
+.accept-icon {
+  position: absolute;
+  right: 5px;
+  font-size: 25px;
+  top: 20px;
+  color: green;
+}
+.retro-headers {
+  display: flex;
+  justify-content: space-around;
+}
