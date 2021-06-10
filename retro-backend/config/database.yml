@@ -1,21 +1,11 @@
-# MySQL. Versions 5.1.10 and up are supported.
-#
-# Install the MySQL driver
-#   gem install mysql2
-#
-# Ensure the MySQL gem is defined in your Gemfile
-#   gem 'mysql2'
-#
-# And be sure to use new-style password hashing:
-#   https://dev.mysql.com/doc/refman/5.7/en/password-hashing.html
-#
 default: &default
-  adapter: mysql2
-  encoding: utf8
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: rails_user
-  password: das
-  host: localhost
+  username: retro
+  password: <%= ENV['retro_DATABASE_PASSWORD'] %>
 
 development:
   <<: *default
@@ -50,5 +40,7 @@ test:
 production:
   <<: *default
   database: retro_production
-  username: rails_user
-  password: <%= ENV['RETRO-BACKEND_DATABASE_PASSWORD'] %>
+  username: retro
+  password: <%= ENV['retro_DATABASE_PASSWORD'] %>
+
+

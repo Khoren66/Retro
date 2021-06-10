@@ -10,11 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_07_163946) do
+ActiveRecord::Schema.define(version: 2021_06_08_164235) do
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
-    t.string "password", limit: 40
+    t.string "password_digest", limit: 256
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
