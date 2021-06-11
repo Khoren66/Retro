@@ -1,4 +1,10 @@
+require "application_responder"
+
 class ApplicationController < ActionController::API
+  include ActionController::MimeResponds
+  self.responder = ApplicationResponder
+  respond_to :html
+
     before_action :authenticate_request
      attr_reader :current_user
    
