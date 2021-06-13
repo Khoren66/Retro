@@ -24,6 +24,7 @@ class RetrosController < ApplicationController
     @retro = Retro.new(retro_params)
     respond_to do |format|
       if @retro.save
+        p @retro
         format.json { render :show, status: :created, location: @retro }
       else
         format.json { render json: @retro.errors, status: :unprocessable_entity }
