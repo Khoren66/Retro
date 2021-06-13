@@ -14,14 +14,14 @@ const headerStyle = {
   },
 };
 
-const Header = ({teamName}) => {
+const Header = ({team_name}) => {
   return (
     <div {...headerStyle}>
       <div style={{height:"10vh"}}>
         <img height="100%" src="https://res.cloudinary.com/dqoxpicbr/image/upload/v1606742493/Screen_Shot_2020-11-30_at_17.01.01_ejznq3.png" />
       </div>
       <Title style={{color:"rgb(63 91 112)",alignSelf:"center"}}><i>Retroboard</i></Title>
-      <Title style={{marginRight:"10px",color:"rgb(243 246 247)"}}>{teamName?teamName:"default Team"}</Title>
+      <Title style={{marginRight:"10px",color:"rgb(243 246 247)"}}>{team_name?team_name:"default Team"}</Title>
     </div>
   );
 };

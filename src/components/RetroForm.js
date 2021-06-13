@@ -9,7 +9,7 @@ import "./retroForm.css"
 const defaultState = {
   loading: false,
   visible: false,
-  teamName: "",
+  team_name: "",
   url: null,
   copied: false,
 };
@@ -33,9 +33,9 @@ const RetroForm = () => {
       setState(defaultState)
     }else{
       setState({ ...state, loading: true });
-      Api.retros.post({"teamName":state.teamName})
+      Api.retros.post({"team_name":state.team_name})
       setTimeout(() => {
-        setState({ ...state, loading: false, teamName: "",url:"localhost:3000" });
+        setState({ ...state, loading: false, team_name: "",url:"localhost:3000" });
       }, 3000);
     } 
   };
@@ -45,7 +45,7 @@ const RetroForm = () => {
   };
 
   const handleInputChange = ({ target: { name, value } }) => {
-    setState({ ...state,teamName: value });
+    setState({ ...state,team_name: value });
     console.log(value);
   };
 
@@ -90,10 +90,10 @@ const RetroForm = () => {
       >
         <Input
           size="large"
-          name="teamName"
+          name="team_name"
           style={{display: state.url?"none":"flex" }}
           onChange={handleInputChange}
-          value={state.teamName}
+          value={state.team_name}
           placeholder="Team Name"
           prefix={<TeamOutlined />}
         />

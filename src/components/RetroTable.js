@@ -11,91 +11,91 @@ const { Link } = Anchor;
 const data = [
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Nemesis",
+    team_name: "Nemesis",
     date: "20-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Tardis",
+    team_name: "Tardis",
     date: "28-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Convoy",
+    team_name: "Convoy",
     date: "20-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Nemesis",
+    team_name: "Nemesis",
     date: "20-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Tardis",
+    team_name: "Tardis",
     date: "28-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Convoy",
+    team_name: "Convoy",
     date: "20-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Nemesis",
+    team_name: "Nemesis",
     date: "20-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Tardis",
+    team_name: "Tardis",
     date: "28-Oct-2020",
     status: "closed",
   },
   {
     retroUrl: "http://localhost:3000/retro",
-    teamName: "Convoy",
+    team_name: "Convoy",
     date: "20-Oct-2020",
     status: "closed",
   },
   // {
   //   retroUrl: "http://localhost:3000/retro",
-  //   teamName: "Nemesis",
+  //   team_name: "Nemesis",
   //   date: "20-Oct-2020",
   //   status: "closed",
   // },
   // {
   //   retroUrl: "http://localhost:3000/retro",
-  //   teamName: "Tardis",
+  //   team_name: "Tardis",
   //   date: "28-Oct-2020",
   //   status: "closed",
   // },
   // {
   //   retroUrl: "http://localhost:3000/retro",
-  //   teamName: "Convoy",
+  //   team_name: "Convoy",
   //   date: "20-Oct-2020",
   //   status: "closed",
   // },
   // {
   //   retroUrl: "http://localhost:3000/retro",
-  //   teamName: "Nemesis",
+  //   team_name: "Nemesis",
   //   date: "20-Oct-2020",
   //   status: "closed",
   // },
   // {
   //   retroUrl: "http://localhost:3000/retro",
-  //   teamName: "Tardis",
+  //   team_name: "Tardis",
   //   date: "28-Oct-2020",
   //   status: "closed",
   // },
   // {
   //   retroUrl: "http://localhost:3000/retro",
-  //   teamName: "Convoy",
+  //   team_name: "Convoy",
   //   date: "20-Oct-2020",
   //   status: "closed",
   // },
@@ -120,7 +120,7 @@ const RetroTable = () => {
           )}
         />
         <Column title="Date" key="date" dataIndex="date" />
-        <Column title="Team" key="teamName" dataIndex="teamName" />
+        <Column title="Team" key="team_name" dataIndex="team_name" />
         <Column
           title="Status"
           key="status"

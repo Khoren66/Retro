@@ -31,6 +31,8 @@ const LoginForm = () => {
         .post(form)
         .then(async (response) => {
           if (response.status === 200) {
+            console.log(response.data.auth_token)
+            await localStorage.setItem('token', response.data.auth_token);
             setForm(empty);
             history.push("/admin");
           } else {
