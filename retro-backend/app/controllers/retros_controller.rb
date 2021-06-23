@@ -4,6 +4,9 @@ class RetrosController < ApplicationController
   # GET /retros or /retros.json
   def index
     @retros = Retro.all
+    respond_to do |format|
+      format.json { render json: @retros}
+    end
   end
 
   # GET /retros/1 or /retros/1.json
@@ -21,13 +24,15 @@ class RetrosController < ApplicationController
 
   # POST /retros or /retros.json
   def create
+    
     @retro = Retro.new(retro_params)
     respond_to do |format|
       if @retro.save
-        p @retro
-        format.json { render :show, status: :created, location: @retro }
+        format.json { render json: @retro, serializer: RetroSerializer }
+        #render JSON { retro: @retro,status: 200}
+        #format.json { render :show, status: :created, location: @retro }
       else
-        format.json { render json: @retro.errors, status: :unprocessable_entity }
+        format.json { render json: @retro.errors } 
       end
     end
   end
@@ -36,7 +41,8 @@ class RetrosController < ApplicationController
   def update
     respond_to do |format|
       if @retro.update(retro_params)
-        format.json { render :show, status: :ok, location: @retro }
+        format.json { render json: @retro, serializer: RetroSerializer }
+       # format.json { render :show,  location: @retro }
       else
         format.json { render json: @retro.errors, status: :unprocessable_entity }
       end
@@ -45,6 +51,7 @@ class RetrosController < ApplicationController
 
   # DELETE /retros/1 or /retros/1.json
   def destroy
+
     @retro.destroy
     respond_to do |format|
       format.json { head :no_content }
