@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { Modal, Button, Input } from "antd";
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import { TeamOutlined, CopyOutlined } from "@ant-design/icons";
 import Api from "../Api/index";
-import "./retroForm.css"
+import "./retroForm.css";
 
 const defaultState = {
   loading: false,
   visible: false,
   team_name: "",
-  url: null,
+  retro_url: null,
   copied: false,
 };
 
-const RetroForm = () => {
+const RetroForm = (user_id) => {
   const [state, setState] = useState(defaultState);
-  // useEffect(()=>{
-   
-  // },[])
+  const { team_name } = state;
+  // useEffect(() => {
+  //   let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
+  //   setUser({user_id:u_id});
+  // }, []);
   let history = useHistory();
 
   const showModal = () => {
@@ -28,16 +30,32 @@ const RetroForm = () => {
     });
   };
 
-  const handleOk = () => {
-    if(state.url){
-      setState(defaultState)
-    }else{
+  const handleOk = async () => {
+    if (state.retro_url) {
+      setState(defaultState);
+    } else {
       setState({ ...state, loading: true });
-      Api.retros.post({"team_name":state.team_name})
-      setTimeout(() => {
-        setState({ ...state, loading: false, team_name: "",url:"localhost:3000" });
-      }, 3000);
-    } 
+      console.log({ team_name, user_id });
+      await Api.retros
+        .post({ team_name, user_id })
+        .then((res) => {
+          if (res.status === 200) {
+            setState({ ...state, retro_url: res.data.retro_url });
+            setTimeout(() => {
+              setState({
+                ...state,
+                loading: false,
+                team_name: res.data.team_name,
+                retro_url: res.data.retro_url,
+              });
+            }, 3000);
+          }
+        })
+        .catch((reqErr) => {
+          console.error(reqErr);
+          console.log(reqErr.res.status);
+        });
+    }
   };
 
   const handleCancel = () => {
@@ -45,13 +63,13 @@ const RetroForm = () => {
   };
 
   const handleInputChange = ({ target: { name, value } }) => {
-    setState({ ...state,team_name: value });
+    setState({ ...state, team_name: value });
     console.log(value);
   };
 
-  const handleCopy=(e)=>{
-    setState({...state,copied: true})
-  }
+  const handleCopy = (e) => {
+    setState({ ...state, copied: true });
+  };
   return (
     <div>
       <Button
@@ -80,7 +98,7 @@ const RetroForm = () => {
           <Button
             key="submit"
             type="primary"
-            style={{display: state.url?"none":"inline-block" }}
+            style={{ display: state.retro_url ? "none" : "inline-block" }}
             loading={state.loading}
             onClick={handleOk}
           >
@@ -91,7 +109,7 @@ const RetroForm = () => {
         <Input
           size="large"
           name="team_name"
-          style={{display: state.url?"none":"flex" }}
+          style={{ display: state.retro_url ? "none" : "flex" }}
           onChange={handleInputChange}
           value={state.team_name}
           placeholder="Team Name"
@@ -99,20 +117,18 @@ const RetroForm = () => {
         />
         <Input
           size="large"
-          name="url"
-          style={{display: state.url?"flex" :"none" }}
+          name="retro_url"
+          style={{ display: state.retro_url ? "flex" : "none" }}
           onChange={handleInputChange}
-          value={state.url}
-          prefix={     
-            <CopyToClipboard text={state.url}
-            onCopy={() => handleCopy()}>
-            <Button  size="large">
-              Copy <CopyOutlined />
-            </Button>
-          </CopyToClipboard>
+          value={state.retro_url}
+          prefix={
+            <CopyToClipboard text={state.retro_url} onCopy={() => handleCopy()}>
+              <Button size="large">
+                Copy <CopyOutlined />
+              </Button>
+            </CopyToClipboard>
           }
         />
-        
       </Modal>
     </div>
   );

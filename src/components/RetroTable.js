@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import { Table, Anchor } from "antd";
 import {
   ClockCircleOutlined,
@@ -10,13 +11,20 @@ import Api from "../Api";
 const { Column } = Table;
 const { Link } = Anchor;
 
-const RetroTable = () => {
+const RetroTable = (user_id) => {
   const [retros, setRetros] = useState([]);
-  useEffect(() => {
-    Api.retros.get().then((res) => {
+  useEffect(async() => {
+    console.log(user_id,"USER ID IN RETRO TABLE AS PROPS")
+    // const response = await axios.get("http://localhost:3000/retros", {
+    //   params: {
+    //     user_id: 1
+    //   }
+    // });
+    // console.log(response ,"responseresponseresponseresponse")
+    Api.retros.get({data:{user_id:1}}).then((res) => {
       setRetros(res.data);
       console.log(res.data);
-    });
+    })
 
     console.log(retros);
   }, []);

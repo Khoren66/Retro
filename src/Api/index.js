@@ -18,7 +18,6 @@ axiosInstance.interceptors.response.use(
 );
 
 axiosInstance.interceptors.request.use((config) => {
-  //localStorage.getItem("token") ? localStorage.getItem("token").token : null;
   let retro = JSON.parse(localStorage.getItem("retro"));
   if(retro){
     console.log(retro)
