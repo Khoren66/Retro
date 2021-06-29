@@ -1,121 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Anchor } from "antd";
 import {
   ClockCircleOutlined,
   CheckCircleFilled,
   CloseCircleFilled,
+  LockFilled,
 } from "@ant-design/icons";
+import Api from "../Api";
 const { Column } = Table;
 const { Link } = Anchor;
 
-const data = [
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Nemesis",
-    date: "20-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Tardis",
-    date: "28-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Convoy",
-    date: "20-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Nemesis",
-    date: "20-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Tardis",
-    date: "28-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Convoy",
-    date: "20-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Nemesis",
-    date: "20-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Tardis",
-    date: "28-Oct-2020",
-    status: "closed",
-  },
-  {
-    retroUrl: "http://localhost:3000/retro",
-    team_name: "Convoy",
-    date: "20-Oct-2020",
-    status: "closed",
-  },
-  // {
-  //   retroUrl: "http://localhost:3000/retro",
-  //   team_name: "Nemesis",
-  //   date: "20-Oct-2020",
-  //   status: "closed",
-  // },
-  // {
-  //   retroUrl: "http://localhost:3000/retro",
-  //   team_name: "Tardis",
-  //   date: "28-Oct-2020",
-  //   status: "closed",
-  // },
-  // {
-  //   retroUrl: "http://localhost:3000/retro",
-  //   team_name: "Convoy",
-  //   date: "20-Oct-2020",
-  //   status: "closed",
-  // },
-  // {
-  //   retroUrl: "http://localhost:3000/retro",
-  //   team_name: "Nemesis",
-  //   date: "20-Oct-2020",
-  //   status: "closed",
-  // },
-  // {
-  //   retroUrl: "http://localhost:3000/retro",
-  //   team_name: "Tardis",
-  //   date: "28-Oct-2020",
-  //   status: "closed",
-  // },
-  // {
-  //   retroUrl: "http://localhost:3000/retro",
-  //   team_name: "Convoy",
-  //   date: "20-Oct-2020",
-  //   status: "closed",
-  // },
-];
-
 const RetroTable = () => {
+  const [retros, setRetros] = useState([]);
+  useEffect(() => {
+    Api.retros.get().then((res) => {
+      setRetros(res.data);
+      console.log(res.data);
+    });
+
+    console.log(retros);
+  }, []);
+
   return (
     <div>
+    {/*  <Table columns={columns} dataSource={retros} pagination={{ pageSize: 50 }} scroll={{ y: 240 }} /> */}
       <Table
-      scroll={{y:true}}
+        scroll={{ y: true }}
         rowKey={(record) => record.id}
-        pagination={false}
-        dataSource={data}
+        pagination={{pageSize: 15}}
+        // pagination = {false}
+        dataSource={retros}
       >
         <Column
           key="retroUrl"
           title="Retro link"
           render={(text, record) => (
             <Anchor>
-              <Link href={record.retroUrl} title={record.retroUrl} />
+              <Link href={record.retro_url} title={record.retro_url} />
             </Anchor>
           )}
         />
@@ -125,32 +46,38 @@ const RetroTable = () => {
           title="Status"
           key="status"
           render={(text, record) =>
-            record.approved === "accepted" ? (
+            record.active === true ? (
               <span>
-                <CheckCircleFilled
+                <ClockCircleOutlined
                   style={{
-                    color: "orange",
+                    color: "#3f5b70",
                     marginRight: "5px",
+                    fontSize: "30px",
                   }}
                 />
-                {record.approved}
+                {record.active}
               </span>
-            ) : record.approved === "declined" ? (
+            ) : record.active === false ? (
               <span>
-                <CloseCircleFilled
+                <LockFilled
                   style={{
-                    color: "red",
+                    color: "#3f5b70",
                     marginRight: "5px",
+                    fontSize: "30px",
                   }}
                 />
-                {record.approved}
+                {record.active}
               </span>
             ) : (
               <span>
                 <ClockCircleOutlined
-                  style={{ color: "#595959", marginRight: "5px" }}
+                  style={{
+                    color: " #3f5b70",
+                    marginRight: "5px",
+                    fontSize: "30px",
+                  }}
                 />{" "}
-                {record.approved}
+                {record.active}
               </span>
             )
           }

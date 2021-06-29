@@ -5,15 +5,17 @@ import { LogoutOutlined } from "@ant-design/icons";
 import "./admin.css";
 import { Typography, Button , Row, Col} from "antd";
 import RetroTable from "../../components/RetroTable";
-
+import Header from "../../components/Header";
 
 const Admin = () => {
   let history = useHistory();
   const handleLogOut = () => {
     history.push("/");
+    localStorage.removeItem('retro');
   };
   return (
     <div className="admin-wrapper">
+      <Header />
       <div>
         <Row>
           <Col span={8}></Col>

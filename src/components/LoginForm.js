@@ -29,18 +29,20 @@ const LoginForm = () => {
     if (form.email && form.password) {
       await Api.login
         .post(form)
-        .then(async (response) => {
-          if (response.status === 200) {
-            console.log(response.data.auth_token)
-            await localStorage.setItem('token', response.data.auth_token);
+        .then(res => {
+          if (res.status === 200) {
+           localStorage.setItem('retro',JSON.stringify({"token":res.data.auth_token,"user_id":1}))
             setForm(empty);
-            history.push("/admin");
+           history.push("/admin");
           } else {
-            setForm(empty);
+            setForm(empty); 
             setWarning(true);
           }
         })
-        .catch((reqErr) => console.error(reqErr));
+        .catch((reqErr) => {
+          console.error(reqErr)
+          console.log(reqErr.res.status)
+        });
     } else {
       setWarning(true);
     }

@@ -9,6 +9,7 @@ const Login = () => {
 
   return (
     <div>
+      <Header />
       <LoginForm classname="admin-login-wrapper"/>
     </div>
   );

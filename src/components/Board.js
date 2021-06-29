@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,useParams } from "react";
 import "./board.css";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { Card, Typography, Input } from "antd";
+import Api from "../Api";
 const { TextArea } = Input;
 
 const formWellDefault = {
@@ -43,6 +44,7 @@ const Board = () => {
   const [formAction, setFormAction] = useState(formActionDefault);
   const [improves, setImproves] = useState([]);
   const [actions, setActions] = useState([]);
+  // const { id } = useParams();
 
   const handleAddWellComment = () => {
     console.log(wellData);

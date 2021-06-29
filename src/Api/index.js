@@ -10,7 +10,7 @@ axiosInstance.interceptors.response.use(
   },
   function (error) {
     if (401 === error.response.status) {
-      return error.response.status;
+      return error.response;
     } else {
       return Promise.reject(error);
     }
@@ -19,13 +19,16 @@ axiosInstance.interceptors.response.use(
 
 axiosInstance.interceptors.request.use((config) => {
   //localStorage.getItem("token") ? localStorage.getItem("token").token : null;
-  let token = localStorage.getItem("token");
-   if(token){
-     config.headers.Authorization = token
-   }else{
-  config.headers.Authorization = null;
-   }
-
+  let retro = JSON.parse(localStorage.getItem("retro"));
+  if(retro){
+    console.log(retro)
+    let token = retro.token
+     if(token){
+       config.headers.Authorization = token
+     }else{
+        config.headers.Authorization = null;
+     }
+  }
   config.headers["Accept"] = "application/json";
   config.headers["testkey"] = "randomdata";
   config.headers.ContentType = "multipart/form-data";
@@ -33,7 +36,7 @@ axiosInstance.interceptors.request.use((config) => {
 });
 const Endpoint = EndpointFactory(axiosInstance);
 export default {
-  login: new Endpoint(`authenticate`),
+  login: new Endpoint("authenticate"),
   retros: new Endpoint("retros"),
-  getRetro: (id) => new Endpoint(`retro/${id}`),
+  getRetro: (id) => new Endpoint(`retros/${id}`),
 };

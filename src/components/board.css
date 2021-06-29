@@ -11,9 +11,9 @@
 }
 .wrapper-scroll {
   overflow-y: scroll;
-  height: 92%;
+  height: 90vh;
 }
-.went-well {
+/* .went-well {
   background-color: #60d060 !important;
 }
 .to-improve {
@@ -23,10 +23,11 @@
 .actions {
   background-color: #6796ec;
   color: #f3f6f7;
-}
+} */
 .card-style {
   margin: 10px;
   border-radius: 15px;
+  box-shadow: 2px 2px 2px rgb(63, 91, 112);
 }
 .column-style {
   /* position: absolute; */

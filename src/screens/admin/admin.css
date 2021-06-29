@@ -1,6 +1,6 @@
 .admin-wrapper {
   border-radius: 5px;
-  height: 82vh;
+  height: 93vh;
 }
 .center {
   justify-content: center;
@@ -17,9 +17,9 @@
   overflow-y: scroll;
 }
 @media (max-height: 980px) {
-  .admin-wrapper {
+  /* .admin-wrapper {
     max-height: 630px;
-  }
+  } */
   .table-scroll{
     height: 92%;
   }

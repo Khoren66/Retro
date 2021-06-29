@@ -15,15 +15,15 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header />
+        
         <Switch>
           <Route exact path="/" component={Login} />
           <Route exact path="/admin/" component={Admin} />
-          <Route exact path="/retro/" component={RetroBoard} />
+          <Route exact path="/retros/:id" component={RetroBoard} />
           RetroBoard
           <Route render={() => <Redirect to="/admin" />} />
         </Switch>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </Router>
   );

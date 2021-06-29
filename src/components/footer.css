@@ -4,6 +4,6 @@
     align-items:center;
     min-height: 70px;
     bottom: 5px;
-    /* height: 5vh; */
+    height: 5vh;
     border-top:5px solid var(--border-color);
 }
