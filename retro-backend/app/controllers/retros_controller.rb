@@ -1,6 +1,9 @@
 class RetrosController < ApplicationController
   before_action :set_retro, only: %i[ show edit update destroy ]
 
+  skip_before_action :authenticate_request
+  #  this is for skiping authenticate_request only for this route ===> skip_before_action :authenticate_request, only: :index
+
   # GET /retros or /retros.json
   def index
     @retros = Retro.all
@@ -11,6 +14,10 @@ class RetrosController < ApplicationController
 
   # GET /retros/1 or /retros/1.json
   def show
+    @retro = Retro.find_by(slug: params[:slug])
+   # @retro = Retro.find(params[:id])
+    render json: @retro, serializer: RetroSerializer 
+    p @retro
   end
 
   # GET /retros/new
@@ -61,11 +68,11 @@ class RetrosController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_retro
-      @retro = Retro.find(params[:id])
+      @retro = Retro.find_by(slug: params[:slug])
     end
 
     # Only allow a list of trusted parameters through.
     def retro_params
-      params.fetch(:retro, {}).permit(:team_name, :retro_url, :user_id, :active)
+      params.require(:retro).permit(:team_name, :retro_url, :user_id, :active)
     end
 end
