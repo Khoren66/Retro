@@ -38,4 +38,5 @@ export default {
   login: new Endpoint("authenticate"),
   retros: new Endpoint("retros"),
   getRetro: (id) => new Endpoint(`retros/${id}`),
+  retrosByUser:(user_id) => new Endpoint(`users/${user_id}`),
 };

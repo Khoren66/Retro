@@ -11,17 +11,12 @@ import Api from "../Api";
 const { Column } = Table;
 const { Link } = Anchor;
 
-const RetroTable = (user_id) => {
+const RetroTable = () => {
   const [retros, setRetros] = useState([]);
   useEffect(async() => {
-    console.log(user_id,"USER ID IN RETRO TABLE AS PROPS")
-    // const response = await axios.get("http://localhost:3000/retros", {
-    //   params: {
-    //     user_id: 1
-    //   }
-    // });
-    // console.log(response ,"responseresponseresponseresponse")
-    Api.retros.get({data:{user_id:1}}).then((res) => {
+    let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
+    // setUser({user_id:u_id});
+    Api.retrosByUser(u_id).get().then((res) => {
       setRetros(res.data);
       console.log(res.data);
     })

@@ -14,13 +14,15 @@ const defaultState = {
   copied: false,
 };
 
-const RetroForm = (user_id) => {
+const RetroForm = () => {
   const [state, setState] = useState(defaultState);
+  const [user,setUser] = useState({user_id: null})
+  const {user_id} = user
   const { team_name } = state;
-  // useEffect(() => {
-  //   let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
-  //   setUser({user_id:u_id});
-  // }, []);
+  useEffect(() => {
+    let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
+    setUser({user_id:u_id});
+  }, []);
   let history = useHistory();
 
   const showModal = () => {

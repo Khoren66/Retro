@@ -31,7 +31,7 @@ const LoginForm = () => {
         .post(form)
         .then(res => {
           if (res.status === 200) {
-           localStorage.setItem('retro',JSON.stringify({"token":res.data.auth_token,"user_id":1}))
+           localStorage.setItem('retro',JSON.stringify({"token":res.data.auth_token,"user_id":res.data.user_id}))
             setForm(empty);
            history.push("/admin");
           } else {
