@@ -21,7 +21,6 @@ const LoginForm = () => {
       ...form,
       [name]: value,
     });
-    console.log(form);
   };
 
   const handleOnSignIn = async (e) => {

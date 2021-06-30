@@ -7,7 +7,6 @@ class AuthenticateUser
     end
   
     def call
-      puts "aaasadadadadadadadada",  user.id
       token = JsonWebToken.encode(user_id: user.id) if user 
       hash  = {token: token, user_id: user.id}
       return hash

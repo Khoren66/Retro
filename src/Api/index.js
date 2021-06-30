@@ -20,7 +20,6 @@ axiosInstance.interceptors.response.use(
 axiosInstance.interceptors.request.use((config) => {
   let retro = JSON.parse(localStorage.getItem("retro"));
   if(retro){
-    console.log(retro)
     let token = retro.token
      if(token){
        config.headers.Authorization = token
@@ -37,6 +36,7 @@ const Endpoint = EndpointFactory(axiosInstance);
 export default {
   login: new Endpoint("authenticate"),
   retros: new Endpoint("retros"),
+  editRetro: (id) => new Endpoint(`retros/${id}`),
   getRetro: (id) => new Endpoint(`retros/${id}`),
   retrosByUser:(user_id) => new Endpoint(`users/${user_id}`),
 };

@@ -11,27 +11,23 @@ import Api from "../Api";
 const { Column } = Table;
 const { Link } = Anchor;
 
-const RetroTable = () => {
+const RetroTable = ({showModal}) => {
   const [retros, setRetros] = useState([]);
   useEffect(async() => {
+
     let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
-    // setUser({user_id:u_id});
     Api.retrosByUser(u_id).get().then((res) => {
       setRetros(res.data);
-      console.log(res.data);
     })
-
-    console.log(retros);
   }, []);
 
   return (
     <div>
-    {/*  <Table columns={columns} dataSource={retros} pagination={{ pageSize: 50 }} scroll={{ y: 240 }} /> */}
       <Table
         scroll={{ y: true }}
+        onRow={showModal}
         rowKey={(record) => record.id}
         pagination={{pageSize: 15}}
-        // pagination = {false}
         dataSource={retros}
       >
         <Column

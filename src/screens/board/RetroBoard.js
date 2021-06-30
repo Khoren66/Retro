@@ -9,18 +9,16 @@ const RetroBoard = () => {
   const [retro, setRetro] = useState([]);
   const { id } = useParams();
   useEffect(() => {
-    console.log(id, "IDIIDIIDIDIDIDIDI");
     Api.getRetro(id)
       .get()
       .then((res) => {
         setRetro(res.data);
-        console.log(res.data);
       });
   }, []);
 
   return (
     <div className="wrapper-scroll">
-      <Header retro={retro?retro:""} />
+      <Header retro={retro?retro:""} />    
       <Board />
     </div>
   );
