@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_101027) do
+ActiveRecord::Schema.define(version: 2021_07_01_082915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "cards", force: :cascade do |t|
+    t.string "type", null: false
+    t.string "text"
+    t.integer "votes"
+    t.string "created_by"
+    t.bigint "retro_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retro_id"], name: "index_cards_on_retro_id"
+  end
 
   create_table "retros", force: :cascade do |t|
     t.string "team_name", default: "", null: false

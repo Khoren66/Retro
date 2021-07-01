@@ -38,25 +38,6 @@ const Admin = () => {
       visible: false,
     });
     Api.editRetro(slug).put({retro})
-
-    // .then((res) => {
-    //   if (res.status === 200) {
-    //     setState({ ...state, retro_url: res.data.retro_url });
-    //     setTimeout(() => {
-    //       setState({
-    //         ...state,
-    //         loading: false,
-    //         team_name: res.data.team_name,
-    //         retro_url: res.data.retro_url,
-    //       });
-    //     }, 3000);
-    //   }
-    // })
-    // .catch((reqErr) => {
-    //   console.error(reqErr);
-    //   console.log(reqErr.res.status);
-    // });
-
   };
 
   const handleCancel = (e) => {

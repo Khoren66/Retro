@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :cards
   resources :retros, param: :slug
   # get 'authentication/authenticate'
   resources :users, param: :user_id
