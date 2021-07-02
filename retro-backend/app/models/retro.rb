@@ -3,6 +3,7 @@ class Retro < ApplicationRecord
     attribute :slug, :string
     attribute :active, :boolean, default: true
     belongs_to :user
+    has_many :cards
     def set_slug_to_random_key
        self.slug = (0...30).map { ('a'..'z').to_a[rand(26)] }.join
     end

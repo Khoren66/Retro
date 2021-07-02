@@ -1,3 +1,3 @@
 class CardSerializer < ActiveModel::Serializer
-  attributes :id, :type, :text,:votes, :created_by
+  attributes :id, :card_type, :text,:votes, :created_by, :retro_id
 end

@@ -4,22 +4,26 @@ import Header from "../../components/Header";
 import Api from "../../Api/index.js";
 import Board from "../../components/Board";
 import "./retroBoard.css";
+import DND from "../../components/DND";
 
 const RetroBoard = () => {
   const [retro, setRetro] = useState([]);
+  const {cards} = retro
   const { id } = useParams();
-  useEffect(() => {
-    Api.getRetro(id)
+  useEffect(async() => {
+    await Api.getRetro(id)
       .get()
       .then((res) => {
         setRetro(res.data);
       });
+      console.log(cards)
   }, []);
 
   return (
     <div className="wrapper-scroll">
       <Header retro={retro?retro:""} />    
-      <Board />
+      {/* <Board cards={cards} /> */}
+      <DND/>
     </div>
   );
 };

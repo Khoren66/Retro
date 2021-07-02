@@ -16,7 +16,9 @@ class RetrosController < ApplicationController
   # GET /retros/1 or /retros/1.json
   def show
     @retro = Retro.find_by(slug: params[:slug])
-    render json: @retro, serializer: RetroSerializer 
+    @cards = Card.where(id:@retro[:id])  
+    puts @cards
+    render json: @retro, serializer: RetroSerializer  
     p @retro
   end
 

@@ -1,5 +1,5 @@
 class Card < ApplicationRecord
-    attribute :type, :string
+    attribute :card_type, :string
     attribute :text, :string
     attribute :votes, :integer
     attribute :created_by, :string

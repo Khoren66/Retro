@@ -1,5 +1,6 @@
-import React, { useEffect, useState,useParams } from "react";
+import React, { useEffect, useState } from "react";
 import "./board.css";
+import { useParams } from "react-router-dom";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { Card, Typography, Input } from "antd";
 import Api from "../Api";
@@ -36,15 +37,27 @@ const formVisible = {
   actionVisible: false,
 };
 
-const Board = () => {
+const Board = ({ cards }) => {
   const [wellData, setWell] = useState([]);
   const [show, setShow] = useState(formVisible);
   const [formWell, setFormWell] = useState(formWellDefault);
   const [formImprove, setFormImprove] = useState(formImproveDefault);
   const [formAction, setFormAction] = useState(formActionDefault);
-  const [improves, setImproves] = useState([]);
+  const [improvesData, setImproves] = useState([]);
   const [actions, setActions] = useState([]);
-  // const { id } = useParams();
+  const [cardsData, setCards] = useState([]);
+  const { id } = useParams();
+  useEffect(async () => {
+    await Api.getRetro(id)
+      .get()
+      .then((res) => {
+        let well = res.data.cards.filter((item) => item.card_type === "well");
+        setWell(well);
+        let improves= res.data.cards.filter((item) => item.card_type === "improve");
+        setImproves(improves);
+        let action = res.data.cards.filter((item) => item.card_type === "action");
+      });
+  }, []);
 
   const handleAddWellComment = () => {
     console.log(wellData);
@@ -54,8 +67,8 @@ const Board = () => {
   };
 
   const handleAddImproveComment = () => {
-    console.log(improves);
-    setImproves([...improves, formImprove]);
+    console.log(improvesData);
+    setImproves([...improvesData, formImprove]);
     setShow({ ...show, improveVisible: false });
     setFormImprove(improveDefault);
   };
@@ -106,32 +119,32 @@ const Board = () => {
 
   return (
     <div>
-        <div className="retro-headers">
-          <div>
-            <Typography>
-              <h3>Went well</h3>
-            </Typography>
-            <button onClick={handleShowWell} className="prymary-color">
-              {show.wellVisible ? "Close" : "New"}
-            </button>
-          </div>
-          <div>
-            <Typography>
-              <h3>To improve</h3>
-            </Typography>
-            <button onClick={handleShowImprove} className="prymary-color">
-              {show.improveVisible ? "Close" : "New"}
-            </button>
-          </div>
-          <div>
-            <Typography>
-              <h3>Action items</h3>
-            </Typography>
-            <button onClick={handleShowAction} className="prymary-color">
-              {show.actionVisible ? "Close" : "New"}
-            </button>
-          </div>
+      <div className="retro-headers">
+        <div>
+          <Typography>
+            <h3>Went well</h3>
+          </Typography>
+          <button onClick={handleShowWell} className="prymary-color">
+            {show.wellVisible ? "Close" : "New"}
+          </button>
         </div>
+        <div>
+          <Typography>
+            <h3>To improve</h3>
+          </Typography>
+          <button onClick={handleShowImprove} className="prymary-color">
+            {show.improveVisible ? "Close" : "New"}
+          </button>
+        </div>
+        <div>
+          <Typography>
+            <h3>Action items</h3>
+          </Typography>
+          <button onClick={handleShowAction} className="prymary-color">
+            {show.actionVisible ? "Close" : "New"}
+          </button>
+        </div>
+      </div>
 
       <div className="board-columns column-wrapper">
         <div className="column-style">
@@ -150,13 +163,11 @@ const Board = () => {
               style={{ display: show.wellVisible ? "inline-block" : "none" }}
               className="accept-icon"
             />
-            {wellData &&
-              wellData.map((item) => {
-                return (
-                  <Card className="went-well card-style">{item.textWell}</Card>
-                );
-              })}
-            <Card className="went-well card-style">Card content</Card>
+            {wellData.map((item) => {
+              console.log(item, "itemitemitem", wellData);
+              return <Card className="went-well card-style">{item.text}</Card>;
+            })}
+            {/* <Card className="went-well card-style">Card content</Card> */}
           </div>
         </div>
 
@@ -176,8 +187,8 @@ const Board = () => {
               style={{ display: show.improveVisible ? "inline-block" : "none" }}
               className="accept-icon"
             />
-            {improves &&
-              improves.map((item) => {
+            {improvesData &&
+              improvesData.map((item) => {
                 return (
                   <Card className="to-improve card-style">
                     {item.textImprove}
