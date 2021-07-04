@@ -29,7 +29,7 @@ const LoginForm = () => {
       await Api.login
         .post(form)
         .then(res => {
-          if (res.status === 200) {
+          if (res.statusText = "OK") {
            localStorage.setItem('retro',JSON.stringify({"token":res.data.auth_token,"user_id":res.data.user_id}))
             setForm(empty);
            history.push("/admin");

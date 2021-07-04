@@ -66,37 +66,25 @@ const getListStyle = (isDraggingOver) => ({
 
 ///////////ENDDDDDD=======>
 
-const formWellDefault = {
+
+const wellDefault = {
   created_by: "",
   text: "",
-  card_type: null,
+  card_type: "well",
   votes: 0,
-};
-const wellDefault = {
-  uid: "",
-  textWell: "",
 };
 const improveDefault = {
-  uid: "",
-  textImprove: "",
+  created_by: "",
+  text: "",
+  card_type: "improve",
+  votes: 0,
 };
 const actionDefault = {
-  uid: "",
-  textAction: "",
-};
-const formImproveDefault = {
   created_by: "",
   text: "",
-  card_type: null,
+  card_type: "action",
   votes: 0,
 };
-const formActionDefault = {
-  created_by: "",
-  text: "",
-  card_type: null,
-  votes: 0,
-};
-
 const formVisible = {
   wellVisible: false,
   improveVisible: false,
@@ -106,9 +94,9 @@ const formVisible = {
 const Board = ({ cards }) => {
   // const [wellData, setWell] = useState([]);
   const [show, setShow] = useState(formVisible);
-  const [formWell, setFormWell] = useState(formWellDefault);
-  const [formImprove, setFormImprove] = useState(formImproveDefault);
-  const [formAction, setFormAction] = useState(formActionDefault);
+  const [formWell, setFormWell] = useState(wellDefault);
+  const [formImprove, setFormImprove] = useState(improveDefault);
+  const [formAction, setFormAction] = useState(actionDefault);
   // const [improvesData, setImproves] = useState([]);
   // const [actions, setActions] = useState([]);
   const [cardsData, setCards] = useState([]);
@@ -118,13 +106,37 @@ const Board = ({ cards }) => {
     wells: [],
     improves: [],
     actions: [],
+    retro_id: "",
   });
-  const { actions, wells, improves } = state;
+  const { actions, wells, improves, retro_id } = state;
   const id2List = {
     dropWell: "wells",
     dropImprove: "improves",
     dropAction: "actions",
   };
+
+  useEffect(async () => {
+    await Api.getRetro(id)
+      .get()
+      .then((res) => {
+        let well = res.data.cards.filter((item) => item.card_type === "well");
+        let retro_id = res.data.id;
+        //setWell(well);
+        let improves = res.data.cards.filter(
+          (item) => item.card_type === "improve"
+        );
+        //setImproves(improves);
+        let action = res.data.cards.filter(
+          (item) => item.card_type === "action"
+        );
+        setState({
+          wells: well,
+          improves: improves,
+          actions: action,
+          retro_id: retro_id,
+        });
+      });
+  }, []);
 
   const getList = (id) => state[id2List[id]];
 
@@ -211,41 +223,39 @@ const Board = ({ cards }) => {
 
   //////======>
 
-  useEffect(async () => {
-    await Api.getRetro(id)
-      .get()
-      .then((res) => {
-        let well = res.data.cards.filter((item) => item.card_type === "well");
-
-        //setWell(well);
-        let improves = res.data.cards.filter(
-          (item) => item.card_type === "improve"
-        );
-        //setImproves(improves);
-        let action = res.data.cards.filter(
-          (item) => item.card_type === "action"
-        );
-        setState({
-          wells: well,
-          improves: improves,
-          actions: action,
-        });
-      });
-  }, []);
-
   const handleAddWellComment = (e) => {
-    console.log(e);
+    console.log(formWell);
     if (e.key === "Enter" || !e.key) {
       setShow({ ...show, wellVisible: false });
+      Api.cards
+        .post({ ...formWell, retro_id })
+        .then((res) => {
+          if ((res.statusText = "OK")) {
+            setState({ ...state, wells: [...wells, res.data] });
+          }
+        })
+        .catch((reqErr) => {
+          console.error(reqErr);
+          console.log(reqErr.res.status);
+        });
       setFormWell(wellDefault);
     }
-    // console.log(wellData);
-    // setWell([...wellData, formWell]);
   };
 
   const handleAddImproveComment = (e) => {
     if (e.key === "Enter" || !e.key) {
       setShow({ ...show, improveVisible: false });
+      Api.cards
+        .post({ ...formImprove, retro_id })
+        .then((res) => {
+          if ((res.statusText = "OK")) {
+            setState({ ...state, improves: [...improves, res.data] });
+          }
+        })
+        .catch((reqErr) => {
+          console.error(reqErr);
+          console.log(reqErr.res.status);
+        });
       setFormImprove(improveDefault);
     }
     //console.log(improvesData);
@@ -255,11 +265,18 @@ const Board = ({ cards }) => {
   const handleAddActionComment = (e) => {
     if (e.key === "Enter" || !e.key) {
       setShow({ ...show, actionVisible: false });
-      setFormAction(actionDefault);
-      setState({
-        ...state,
-        actions: [...actions, formAction],
-      });
+      Api.cards
+        .post({ ...formAction, retro_id })
+        .then((res) => {
+          if ((res.statusText = "OK")) {
+            setState({...state,actions: [...actions, res.data]});
+          }
+        })
+        .catch((reqErr) => {
+          console.error(reqErr);
+          console.log(reqErr.res.status);
+        });
+      setFormAction(actionDefault);  
     }
     // console.log(actions);
     // setActions([...actions, formAction]);
@@ -268,7 +285,7 @@ const Board = ({ cards }) => {
   const handleShowWell = () => {
     if (show.wellVisible) {
       setShow({ ...show, wellVisible: false });
-      setFormWell(formWellDefault);
+      setFormWell(wellDefault);
     } else {
       setShow({ ...show, wellVisible: true });
     }
@@ -276,7 +293,7 @@ const Board = ({ cards }) => {
   const handleShowImprove = () => {
     if (show.improveVisible) {
       setShow({ ...show, improveVisible: false });
-      setFormImprove(formImproveDefault);
+      setFormImprove(improveDefault);
     } else {
       setShow({ ...show, improveVisible: true });
     }
@@ -284,7 +301,7 @@ const Board = ({ cards }) => {
   const handleShowAction = () => {
     if (show.actionVisible) {
       setShow({ ...show, actionVisible: false });
-      setFormAction(formActionDefault);
+      setFormAction(actionDefault);
     } else {
       setShow({ ...show, actionVisible: true });
     }
@@ -302,18 +319,18 @@ const Board = ({ cards }) => {
     setFormAction({ ...formAction, [name]: value });
   };
 
-  const handleCloseActionForm=()=>{
-    setFormAction(formActionDefault);
+  const handleCloseActionForm = () => {
+    setFormAction(actionDefault);
     setShow({ ...show, actionVisible: false });
-  }
-  const handleCloseImproveForm=()=>{
-    setFormImprove(formImproveDefault);
+  };
+  const handleCloseImproveForm = () => {
+    setFormImprove(improveDefault);
     setShow({ ...show, improveVisible: false });
-  }
-  const handleCloseWellForm=()=>{
-    setFormWell(formWellDefault);
+  };
+  const handleCloseWellForm = () => {
+    setFormWell(wellDefault);
     setShow({ ...show, wellVisible: false });
-  }
+  };
 
   return (
     <div>
@@ -361,8 +378,8 @@ const Board = ({ cards }) => {
         <DragDropContext onDragEnd={onDragEnd}>
           <div style={{ width: "30%" }}>
             <TextArea
-              value={formWell.textWell}
-              name="textWell"
+              value={formWell.text}
+              name="text"
               className="text-field"
               onKeyDown={handleAddWellComment}
               onChange={handleWellChange}
@@ -416,8 +433,8 @@ const Board = ({ cards }) => {
           </div>
           <div style={{ width: "30%" }}>
             <TextArea
-              value={formImprove.textImprove}
-              name="textImprove"
+              value={formImprove.text}
+              name="text"
               className="text-field"
               onKeyDown={handleAddImproveComment}
               onChange={handleImproveChange}
@@ -475,8 +492,8 @@ const Board = ({ cards }) => {
           </div>
           <div style={{ width: "30%" }}>
             <TextArea
-              value={formAction.textAction}
-              name="textAction"
+              value={formAction.text}
+              name="text"
               className="text-field"
               style={{ display: show.actionVisible ? "inline-block" : "none" }}
               onKeyDown={handleAddActionComment}
@@ -538,8 +555,8 @@ const Board = ({ cards }) => {
         {/* <div className="column-style">
           <div style={{ width: "30%", position: "absolute" }}>
             <TextArea
-              value={formWell.textWell}
-              name="textWell"
+              value={formWell.text}
+              name="text"
               className="text-field"
               onChange={handleWellChange}
               style={{ display: show.wellVisible ? "inline-block" : "none" }}
@@ -562,8 +579,8 @@ const Board = ({ cards }) => {
         {/* <div className="column-style">
           <div style={{ width: "30%", position: "absolute" }}>
             <TextArea
-              value={formImprove.textImprove}
-              name="textImprove"
+              value={formImprove.text}
+              name="text"
               className="text-field"
               onChange={handleImproveChange}
               style={{ display: show.improveVisible ? "inline-block" : "none" }}
@@ -579,7 +596,7 @@ const Board = ({ cards }) => {
               improvesData.map((item) => {
                 return (
                   <Card className="to-improve card-style">
-                    {item.textImprove}
+                    {item.text}
                   </Card>
                 );
               })}
@@ -590,8 +607,8 @@ const Board = ({ cards }) => {
         <div className="column-style">
           <div style={{ width: "30%", position: "absolute" }}>
             <TextArea
-              value={formAction.textAction}
-              name="textAction"
+              value={formAction.text}
+              name="text"
               className="text-field"
               style={{ display: show.actionVisible ? "inline-block" : "none" }}
               onChange={handleActionChange}
@@ -606,7 +623,7 @@ const Board = ({ cards }) => {
             {actions &&
               actions.map((item) => {
                 return (
-                  <Card className="actions card-style">{item.textAction}</Card>
+                  <Card className="actions card-style">{item.text}</Card>
                 );
               })}
             <Card className="actions card-style">Card content</Card>

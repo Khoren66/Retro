@@ -36,6 +36,7 @@ const Endpoint = EndpointFactory(axiosInstance);
 export default {
   login: new Endpoint("authenticate"),
   retros: new Endpoint("retros"),
+  cards: new Endpoint("cards"),
   editRetro: (id) => new Endpoint(`retros/${id}`),
   getRetro: (id) => new Endpoint(`retros/${id}`),
   retrosByUser:(user_id) => new Endpoint(`users/${user_id}`),

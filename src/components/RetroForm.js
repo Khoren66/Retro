@@ -41,7 +41,7 @@ const RetroForm = () => {
       await Api.retros
         .post({ team_name, user_id })
         .then((res) => {
-          if (res.status === 200) {
+          if (res.statusText = "OK") {
             setState({ ...state, retro_url: res.data.retro_url });
             setTimeout(() => {
               setState({
