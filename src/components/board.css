@@ -7,6 +7,7 @@
 }
 .board-columns {
   display: flex;
+  justify-content: space-around;
   background-color: #f3f3f3;
 }
 .wrapper-scroll {
@@ -35,18 +36,39 @@
   margin: 10px;
 }
 .text-field {
-  border-radius: 15px;
+  border-radius: 15px 15px 0 0;
+  /* border-bottom-color:white; */
   margin-top: 10px;
   padding-right: 35px;
 }
 .accept-icon {
-  position: absolute;
+  right: 2px;
+  font-size: 25px;
+  top: 20px;
+  margin-left: 5px;
+  color: green;
+}
+.remove-icon {
   right: 5px;
   font-size: 25px;
   top: 20px;
-  color: green;
+  color: red;
+}
+.icons-right{
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 5px;
+  /* border-radius: 0 0 15px 15 px;
+  background: white; */
 }
 .retro-headers {
   display: flex;
   justify-content: space-around;
+}
+
+.disbled-button{
+  color: #3f5b70 ;
+  background: #3f5b70 ;
+  width:100%;
+  margin-bottom: 5px;
 }

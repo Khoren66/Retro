@@ -57,8 +57,9 @@ body{
 .prymary-color{
   color: #f3f6f7;
   background: #3f5b70 ;
-  width:100px;
-  border-radius: 5px;
+  width:100%;
+  margin-bottom: 5px;
+  /* border-radius: 5px; */
 }
 .prymary-color:hover{
   background:#f3f6f7;
