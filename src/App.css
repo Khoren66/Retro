@@ -6,7 +6,11 @@
   pointer-events: none;
 }
 
-.ant-typography + h1.ant-typography, .ant-typography + h2.ant-typography, .ant-typography + h3.ant-typography, .ant-typography + h4.ant-typography, .ant-typography + h5.ant-typography{
+.ant-typography + h1.ant-typography,
+.ant-typography + h2.ant-typography,
+.ant-typography + h3.ant-typography,
+.ant-typography + h4.ant-typography,
+.ant-typography + h5.ant-typography {
   margin-top: 0 !important;
 }
 
@@ -15,12 +19,12 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-body{
+body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
-.footer{
+.footer {
   margin-top: auto;
 }
 
@@ -47,38 +51,39 @@ body{
     transform: rotate(360deg);
   }
 }
-body{
+body {
   background-color: #f3f3f3 !important;
   margin: 0;
   padding: 0;
   top: 0;
   bottom: 0;
 }
-.prymary-color{
+.prymary-color {
   color: #f3f6f7;
-  background: #3f5b70 ;
-  width:100%;
+  background: #3f5b70;
+  width: 100%;
   margin-bottom: 5px;
-  /* border-radius: 5px; */
+  border-radius: 5px;
+  font-size: 16px;
 }
-.prymary-color:hover{
-  background:#f3f6f7;
-  color:  #3f5b70 
+.prymary-color:hover {
+  background: #f3f6f7;
+  color: #3f5b70;
 }
 .prymary-color:active {
-  background-color: #3f5b70 ;
+  background-color: #3f5b70;
   color: #f3f6f7;
-  box-shadow: 0 3px #3f5b70 ;
+  box-shadow: 0 3px #3f5b70;
   /* transform: translateY(4px); */
 }
-.border-color{
-  background: rgb(63, 91, 112)
+.border-color {
+  background: rgb(63, 91, 112);
 }
-.main-color{
-  background: rgb(243, 246, 247)
+.main-color {
+  background: rgb(243, 246, 247);
 }
 
 :root {
   --border-color: rgb(63, 91, 112);
-  --main-color: rgb(243, 246, 247)
+  --main-color: rgb(243, 246, 247);
 }

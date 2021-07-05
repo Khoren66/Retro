@@ -61,6 +61,14 @@
   /* border-radius: 0 0 15px 15 px;
   background: white; */
 }
+.like-icon{
+  margin-right: 5px;
+  color: white;
+}
+.edit-icon{
+  color: white;
+  margin-left: 5px;
+}
 .retro-headers {
   display: flex;
   justify-content: space-around;
@@ -70,5 +78,15 @@
   color: #3f5b70 ;
   background: #3f5b70 ;
   width:100%;
+  height: 32px;
   margin-bottom: 5px;
+  border-radius: 5px;
+}
+.ant-modal-close{
+  display: none;
+}
+.close-remove-icon{
+display: flex;
+justify-content: flex-end;
+color: white;
 }

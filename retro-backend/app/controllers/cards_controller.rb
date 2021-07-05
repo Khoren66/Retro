@@ -36,14 +36,24 @@ class CardsController < ApplicationController
 
   # PATCH/PUT /cards/1 or /cards/1.json
   def update
-    @card.update(card_params)
-    respond_with(@card)
+    respond_to do |format|
+      if @card.update(card_params)
+        format.json { render json: @card, serializer: CardSerializer }
+      else
+        format.json { render json: @card.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   # DELETE /cards/1 or /cards/1.json
   def destroy
-    @card.destroy
-    respond_with(@card)
+    respond_to do |format|
+      if @card.destroy
+        format.json { render json: @card, serializer: CardSerializer }
+      else
+        format.json { render json: @card.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   private

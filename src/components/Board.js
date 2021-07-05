@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./board.css";
 import { useParams } from "react-router-dom";
-import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
-import { Card, Typography, Input } from "antd";
+import {
+  CheckCircleFilled,
+  CloseCircleFilled,
+  UserOutlined,
+  EditFilled,
+  ExclamationCircleOutlined,
+  LikeFilled,
+} from "@ant-design/icons";
+import { Typography, Input, Modal, Button } from "antd";
 import Api from "../Api";
+import RetroCard from "./RetroCard";
 const { TextArea } = Input;
-
-///   start  =======>=======>=======>
-
-// fake data generator
-// const getItems = (count, offset = 0) =>
-//   Array.from({ length: count }, (v, k) => k).map((k) => ({
-//     id: `item-${k + offset}`,
-//     content: `item ${k + offset}`,
-//   }));
+const { confirm } = Modal;
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -47,8 +47,8 @@ const grid = 8;
 const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the wells look a bit nicer
   userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+  padding: "8px 8px 0",
+  margin: `0 0 8px`,
 
   // change background colour if dragging
   background: isDragging ? "lightgreen" : "grey",
@@ -58,31 +58,26 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 });
 
 const getListStyle = (isDraggingOver) => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
+  // background: isDraggingOver ? "lightblue" : "lightgrey",
   minHeight: "70vh",
-  // padding: grid,
-  // width: 250,
 });
-
-///////////ENDDDDDD=======>
-
 
 const wellDefault = {
   created_by: "",
   text: "",
-  card_type: "well",
+  card_type: "wells",
   votes: 0,
 };
 const improveDefault = {
   created_by: "",
   text: "",
-  card_type: "improve",
+  card_type: "improves",
   votes: 0,
 };
 const actionDefault = {
   created_by: "",
   text: "",
-  card_type: "action",
+  card_type: "actions",
   votes: 0,
 };
 const formVisible = {
@@ -91,12 +86,20 @@ const formVisible = {
   actionVisible: false,
 };
 
+const id2List = {
+  dropWell: "wells",
+  dropImprove: "improves",
+  dropAction: "actions",
+};
+
 const Board = ({ cards }) => {
   // const [wellData, setWell] = useState([]);
   const [show, setShow] = useState(formVisible);
   const [formWell, setFormWell] = useState(wellDefault);
   const [formImprove, setFormImprove] = useState(improveDefault);
   const [formAction, setFormAction] = useState(actionDefault);
+  const [isNameModalVisible, setNameModalVisible] = useState(false);
+  const [user, setUserName] = useState({ name: "" });
   // const [improvesData, setImproves] = useState([]);
   // const [actions, setActions] = useState([]);
   const [cardsData, setCards] = useState([]);
@@ -109,25 +112,26 @@ const Board = ({ cards }) => {
     retro_id: "",
   });
   const { actions, wells, improves, retro_id } = state;
-  const id2List = {
-    dropWell: "wells",
-    dropImprove: "improves",
-    dropAction: "actions",
-  };
 
   useEffect(async () => {
+    let user = JSON.parse(localStorage.getItem("retro_open_user"));
+    if (!user) {
+      setNameModalVisible(true);
+    } else {
+      setUserName({ name: user.name });
+    }
     await Api.getRetro(id)
       .get()
       .then((res) => {
-        let well = res.data.cards.filter((item) => item.card_type === "well");
+        let well = res.data.cards.filter((item) => item.card_type === "wells");
         let retro_id = res.data.id;
         //setWell(well);
         let improves = res.data.cards.filter(
-          (item) => item.card_type === "improve"
+          (item) => item.card_type === "improves"
         );
         //setImproves(improves);
         let action = res.data.cards.filter(
-          (item) => item.card_type === "action"
+          (item) => item.card_type === "actions"
         );
         setState({
           wells: well,
@@ -141,15 +145,22 @@ const Board = ({ cards }) => {
   const getList = (id) => state[id2List[id]];
 
   const onDragEnd = (result) => {
-    console.log(result, "result for DRAG END");
+    // console.log(result, "result for DRAG END");
     const { source, destination } = result;
-    console.log(source, "source for DRAG END");
-    console.log(destination, "destination for DRAG END");
+    console.log(
+      improves[source.index],
+      "source for DRAG END =====>>>2222222 this shoud be merged and removed"
+    );
+    console.log(
+      improves[destination.index],
+      "destination for DRAG END where must be merged"
+    );
     // dropped outside the list
     if (!destination) {
       return;
     }
-
+console.log(source.droppableId,"source.droppableId")
+console.log(destination.droppableId,"destination.droppableId")
     if (source.droppableId === destination.droppableId) {
       const columnCards = reorder(
         getList(source.droppableId),
@@ -158,39 +169,45 @@ const Board = ({ cards }) => {
       );
 
       let stateColumn = { columnCards };
-      console.log(
-        stateColumn,
-        "STATE row 133 if (source.droppableId === destination.droppableId) {"
-      );
+      // console.log(
+      //   stateColumn,
+      //   "STATE row 133 if (source.droppableId === destination.droppableId) {"
+      // );
 
-      console.log(
-        source,
-        "Ssource.droppableId === (source.droppableId === destination.droppableId) {"
-      );
+      // console.log(
+      //   source,
+      //   "Ssource.droppableId === (source.droppableId === destination.droppableId) {"
+      // );
+      
       if (source.droppableId === "dropImprove") {
+        showConfirm(improves[source.index], improves[destination.index])
         stateColumn = { improves: columnCards };
       } else if (source.droppableId === "dropAction") {
+        showConfirm(actions[source.index], actions[destination.index])
         stateColumn = { actions: columnCards };
-        console.log(
-          state,
-          "STATS in else if(source.droppableId === dropAction"
-        );
+        // console.log(
+        //   state,
+        //   "STATS in else if(source.droppableId === dropAction"
+        // );
+      }else{
+        showConfirm(wells[source.index], wells[destination.index])
+        stateColumn = { wells: columnCards };
       }
 
       setState({ ...state, stateColumn });
     } else {
-      console.log(
-        state,
-        "STATE row 133 else ====>{source.droppableId === destination.droppableId) {"
-      );
-      console.log(
-        getList(source.droppableId),
-        "getList(source.droppableId)=======>"
-      );
-      console.log(
-        getList(destination.droppableId),
-        " getList(destination.droppableId)=======>"
-      );
+      // console.log(
+      //   state,
+      //   "STATE row 133 else ====>{source.droppableId === destination.droppableId) {"
+      // );
+      // console.log(
+      //   getList(source.droppableId),
+      //   "getList(source.droppableId)=======>"
+      // );
+      // console.log(
+      //   getList(destination.droppableId),
+      //   " getList(destination.droppableId)=======>"
+      // );
 
       const result = move(
         getList(source.droppableId),
@@ -221,14 +238,34 @@ const Board = ({ cards }) => {
     }
   };
 
-  //////======>
-
-  const handleAddWellComment = (e) => {
+  const showConfirm = (sourceCard, destinationCard) => {
+    confirm({
+      title: "Do you Want to merge these items?",
+      icon: <ExclamationCircleOutlined />,
+      content:[
+        <p>{sourceCard.text}</p>,
+        <p>================</p>,
+        <p>{destinationCard.text}</p>
+      ],
+      onOk() {
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+  const handleAddWellCard = (e) => {
     console.log(formWell);
-    if (e.key === "Enter" || !e.key) {
+    if (
+      (e.key === "Enter" || !e.key) &&
+      formWell.text.length > 0 &&
+      !formWell.text.includes("\n")
+    ) {
       setShow({ ...show, wellVisible: false });
+      console.log({ ...formWell, retro_id, created_by: user.name });
       Api.cards
-        .post({ ...formWell, retro_id })
+        .post({ ...formWell, retro_id, created_by: user.name })
         .then((res) => {
           if ((res.statusText = "OK")) {
             setState({ ...state, wells: [...wells, res.data] });
@@ -242,11 +279,15 @@ const Board = ({ cards }) => {
     }
   };
 
-  const handleAddImproveComment = (e) => {
-    if (e.key === "Enter" || !e.key) {
+  const handleAddImproveCard = (e) => {
+    if (
+      (e.key === "Enter" || !e.key) &&
+      formImprove.text.length > 0 &&
+      !formImprove.text.includes("\n")
+    ) {
       setShow({ ...show, improveVisible: false });
       Api.cards
-        .post({ ...formImprove, retro_id })
+        .post({ ...formImprove, retro_id, created_by: user.name })
         .then((res) => {
           if ((res.statusText = "OK")) {
             setState({ ...state, improves: [...improves, res.data] });
@@ -258,28 +299,28 @@ const Board = ({ cards }) => {
         });
       setFormImprove(improveDefault);
     }
-    //console.log(improvesData);
-    //setImproves([...improvesData, formImprove]);
   };
 
-  const handleAddActionComment = (e) => {
-    if (e.key === "Enter" || !e.key) {
+  const handleAddActionCard = (e) => {
+    if (
+      (e.key === "Enter" || !e.key) &&
+      formAction.text.length > 0 &&
+      !formAction.text.includes("\n")
+    ) {
       setShow({ ...show, actionVisible: false });
       Api.cards
-        .post({ ...formAction, retro_id })
+        .post({ ...formAction, retro_id, created_by: user.name })
         .then((res) => {
           if ((res.statusText = "OK")) {
-            setState({...state,actions: [...actions, res.data]});
+            setState({ ...state, actions: [...actions, res.data] });
           }
         })
         .catch((reqErr) => {
           console.error(reqErr);
           console.log(reqErr.res.status);
         });
-      setFormAction(actionDefault);  
+      setFormAction(actionDefault);
     }
-    // console.log(actions);
-    // setActions([...actions, formAction]);
   };
 
   const handleShowWell = () => {
@@ -332,8 +373,38 @@ const Board = ({ cards }) => {
     setShow({ ...show, wellVisible: false });
   };
 
+  const handleNameModalConfirm = () => {
+    if (user.name.length > 0) {
+      localStorage.setItem("retro_open_user", JSON.stringify(user));
+      setNameModalVisible(false);
+    }
+  };
+  const handleModalNameChange = ({ target: { name, value } }) => {
+    setUserName({ ...user, [name]: value });
+    console.log(user);
+  };
   return (
     <div>
+      <Modal
+        title="Please type your name"
+        footer={[
+          <Button
+            onClick={handleNameModalConfirm}
+            style={{ background: "#3f5b70", color: "white" }}
+          >
+            Confirm
+          </Button>,
+        ]}
+        visible={isNameModalVisible}
+      >
+        <Input
+          size="large"
+          name="name"
+          onChange={handleModalNameChange}
+          placeholder="Your name"
+          prefix={<UserOutlined />}
+        />
+      </Modal>
       <div className="retro-headers">
         <div style={{ width: "30%" }}>
           <Typography>
@@ -374,14 +445,13 @@ const Board = ({ cards }) => {
       </div>
 
       <div className="board-columns column-wrapper">
-        {/* ============>>>>>>>> */}
         <DragDropContext onDragEnd={onDragEnd}>
           <div style={{ width: "30%" }}>
             <TextArea
               value={formWell.text}
               name="text"
               className="text-field"
-              onKeyDown={handleAddWellComment}
+              onKeyDown={handleAddWellCard}
               onChange={handleWellChange}
               style={{ display: show.wellVisible ? "inline-block" : "none" }}
               placeholder="What did go well ?"
@@ -394,7 +464,7 @@ const Board = ({ cards }) => {
                 className="remove-icon"
               />
               <CheckCircleFilled
-                onClick={handleAddWellComment}
+                onClick={handleAddWellCard}
                 style={{ display: show.wellVisible ? "inline-block" : "none" }}
                 className="accept-icon"
               />
@@ -412,17 +482,14 @@ const Board = ({ cards }) => {
                       index={index}
                     >
                       {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getItemStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style
-                          )}
-                        >
-                          {item.text}
-                        </div>
+                        <RetroCard
+                          state={state}
+                          setState={setState}
+                          item={item}
+                          provided={provided}
+                          getItemStyle={getItemStyle}
+                          snapshot={snapshot}
+                        />
                       )}
                     </Draggable>
                   ))}
@@ -436,7 +503,7 @@ const Board = ({ cards }) => {
               value={formImprove.text}
               name="text"
               className="text-field"
-              onKeyDown={handleAddImproveComment}
+              onKeyDown={handleAddImproveCard}
               onChange={handleImproveChange}
               style={{ display: show.improveVisible ? "inline-block" : "none" }}
               placeholder="What should be improved ?"
@@ -451,7 +518,7 @@ const Board = ({ cards }) => {
                 className="remove-icon"
               />
               <CheckCircleFilled
-                onClick={handleAddImproveComment}
+                onClick={handleAddImproveCard}
                 style={{
                   display: show.improveVisible ? "inline-block" : "none",
                 }}
@@ -471,17 +538,14 @@ const Board = ({ cards }) => {
                       index={index}
                     >
                       {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getItemStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style
-                          )}
-                        >
-                          {item.text}
-                        </div>
+                        <RetroCard
+                          state={state}
+                          setState={setState}
+                          item={item}
+                          provided={provided}
+                          getItemStyle={getItemStyle}
+                          snapshot={snapshot}
+                        />
                       )}
                     </Draggable>
                   ))}
@@ -496,7 +560,7 @@ const Board = ({ cards }) => {
               name="text"
               className="text-field"
               style={{ display: show.actionVisible ? "inline-block" : "none" }}
-              onKeyDown={handleAddActionComment}
+              onKeyDown={handleAddActionCard}
               onChange={handleActionChange}
               placeholder="What are we going to do ?"
               autoSize={{ minRows: 3, maxRows: 4 }}
@@ -510,7 +574,7 @@ const Board = ({ cards }) => {
                 className="remove-icon"
               />
               <CheckCircleFilled
-                onClick={handleAddActionComment}
+                onClick={handleAddActionCard}
                 style={{
                   display: show.actionVisible ? "inline-block" : "none",
                 }}
@@ -530,17 +594,14 @@ const Board = ({ cards }) => {
                       index={index}
                     >
                       {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getItemStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style
-                          )}
-                        >
-                          {item.text}
-                        </div>
+                        <RetroCard
+                          state={state}
+                          setState={setState}
+                          item={item}
+                          provided={provided}
+                          getItemStyle={getItemStyle}
+                          snapshot={snapshot}
+                        />
                       )}
                     </Draggable>
                   ))}
@@ -550,85 +611,6 @@ const Board = ({ cards }) => {
             </Droppable>
           </div>
         </DragDropContext>
-
-        {/* ============>>>>>>>> */}
-        {/* <div className="column-style">
-          <div style={{ width: "30%", position: "absolute" }}>
-            <TextArea
-              value={formWell.text}
-              name="text"
-              className="text-field"
-              onChange={handleWellChange}
-              style={{ display: show.wellVisible ? "inline-block" : "none" }}
-              placeholder="What did go well ?"
-              autoSize={{ minRows: 3, maxRows: 4 }}
-            />
-            <CheckCircleFilled
-              onClick={handleAddWellComment}
-              style={{ display: show.wellVisible ? "inline-block" : "none" }}
-              className="accept-icon"
-            />
-            {wellData.map((item) => {
-              console.log(item, "itemitemitem", wellData);
-              return <Card className="went-well card-style">{item.text}</Card>;
-            })}
-
-          </div>
-        </div> 
-
-        {/* <div className="column-style">
-          <div style={{ width: "30%", position: "absolute" }}>
-            <TextArea
-              value={formImprove.text}
-              name="text"
-              className="text-field"
-              onChange={handleImproveChange}
-              style={{ display: show.improveVisible ? "inline-block" : "none" }}
-              placeholder="What should be improved ?"
-              autoSize={{ minRows: 3, maxRows: 4 }}
-            />
-            <CheckCircleFilled
-              onClick={handleAddImproveComment}
-              style={{ display: show.improveVisible ? "inline-block" : "none" }}
-              className="accept-icon"
-            />
-            {improvesData &&
-              improvesData.map((item) => {
-                return (
-                  <Card className="to-improve card-style">
-                    {item.text}
-                  </Card>
-                );
-              })}
-            <Card className="to-improve card-style">Card content</Card>
-          </div>
-        </div>
-
-        <div className="column-style">
-          <div style={{ width: "30%", position: "absolute" }}>
-            <TextArea
-              value={formAction.text}
-              name="text"
-              className="text-field"
-              style={{ display: show.actionVisible ? "inline-block" : "none" }}
-              onChange={handleActionChange}
-              placeholder="What are we going to do ?"
-              autoSize={{ minRows: 3, maxRows: 4 }}
-            />
-            <CheckCircleFilled
-              onClick={handleAddActionComment}
-              style={{ display: show.actionVisible ? "inline-block" : "none" }}
-              className="accept-icon"
-            />
-            {actions &&
-              actions.map((item) => {
-                return (
-                  <Card className="actions card-style">{item.text}</Card>
-                );
-              })}
-            <Card className="actions card-style">Card content</Card>
-          </div>
-        </div> */}
       </div>
     </div>
   );
