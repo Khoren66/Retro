@@ -88,7 +88,7 @@ const RetroCard = ({
         onClick={() => showDeleteConfirm(item)}
         className="close-remove-icon"
       />
-      <div>{item.text}</div>
+      <div dangerouslySetInnerHTML={{__html:item.text}}></div>
       <div
         style={{
           display: "flex",

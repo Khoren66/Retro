@@ -159,8 +159,8 @@ const Board = ({ cards }) => {
     if (!destination) {
       return;
     }
-console.log(source.droppableId,"source.droppableId")
-console.log(destination.droppableId,"destination.droppableId")
+    console.log(source.droppableId, "source.droppableId");
+    console.log(destination.droppableId, "destination.droppableId");
     if (source.droppableId === destination.droppableId) {
       const columnCards = reorder(
         getList(source.droppableId),
@@ -178,37 +178,24 @@ console.log(destination.droppableId,"destination.droppableId")
       //   source,
       //   "Ssource.droppableId === (source.droppableId === destination.droppableId) {"
       // );
-      
-      if (source.droppableId === "dropImprove") {
-        showConfirm(improves[source.index], improves[destination.index])
+
+      if (source.droppableId === "dropImprove" && improves[source.index].id!==improves[destination.index].id) {
+        showConfirm(improves[source.index], improves[destination.index],"improves");
         stateColumn = { improves: columnCards };
-      } else if (source.droppableId === "dropAction") {
-        showConfirm(actions[source.index], actions[destination.index])
+      } else if (source.droppableId === "dropAction" && actions[source.index].id!==actions[destination.index].id) {
+        showConfirm(actions[source.index], actions[destination.index],"actions");
         stateColumn = { actions: columnCards };
         // console.log(
         //   state,
         //   "STATS in else if(source.droppableId === dropAction"
         // );
-      }else{
-        showConfirm(wells[source.index], wells[destination.index])
+      } else if(source.droppableId === "dropWell" && wells[source.index].id!== wells[destination.index].id) {
+        showConfirm(wells[source.index], wells[destination.index],"wells");
         stateColumn = { wells: columnCards };
       }
 
       setState({ ...state, stateColumn });
     } else {
-      // console.log(
-      //   state,
-      //   "STATE row 133 else ====>{source.droppableId === destination.droppableId) {"
-      // );
-      // console.log(
-      //   getList(source.droppableId),
-      //   "getList(source.droppableId)=======>"
-      // );
-      // console.log(
-      //   getList(destination.droppableId),
-      //   " getList(destination.droppableId)=======>"
-      // );
-
       const result = move(
         getList(source.droppableId),
         getList(destination.droppableId),
@@ -237,19 +224,56 @@ console.log(destination.droppableId,"destination.droppableId")
       }
     }
   };
+const handleMergeCards=(sourceCard, destinationCard,cardsColumn)=>{
+  let data = []
+  if(cardsColumn==="wells"){
+    data =wells
+  }else if(cardsColumn==="improves"){
+    data=improves
+  }else{
+    data =actions
+  }
+  let filtered = []
+  let filteredDestination = []
+  let removingCard = []
+  let mergedCard = {}
+  filtered=data.filter((item) => item.id !== sourceCard.id );
+  removingCard=data.filter((item) => item.id === sourceCard.id);
+  filteredDestination= data.filter((item) => item.id === destinationCard.id);
+  //setState({...state,wells:[...wells,fil]})
+  console.log(filtered,"filteredfilteredfilteredfilteredfiltered")
+  console.log(removingCard[0],"removing Card")//api call to remove this
+  console.log(...filteredDestination,"final card which is merged")//api call to update this
+  mergedCard = filteredDestination[0]
+   mergedCard.text = `<p>${filteredDestination[0].text}</br> -------</br>${removingCard[0].text}</p>`
+   mergedCard.created_by = `${filteredDestination[0].created_by}, ${removingCard[0].created_by}`
+   mergedCard.votes = filteredDestination[0].votes+removingCard[0].votes
+  console.log(mergedCard,"mergedCard")
+  if(sourceCard.id!== destinationCard.id){
+    if(sourceCard.card_type==='wells' && destinationCard.card_type==="wells" ){
+   
+      setState({...state,wells:[...filtered]})
+      console.log({wells:[...filtered]},"wells ")
+    }
+    else if(sourceCard.card_type==='improves' && destinationCard.card_type==="improves"){
+      setState({...state,improves:[...filtered]})
+    }else if(sourceCard.card_type==='actions' && destinationCard.card_type==="actions"){
+      setState({...state,actions:[...filtered]})
+     }
+  }
+  
 
-  const showConfirm = (sourceCard, destinationCard) => {
+
+}
+  const showConfirm = (sourceCard, destinationCard,cardsColumn) => {
     confirm({
       title: "Do you Want to merge these items?",
       icon: <ExclamationCircleOutlined />,
-      content:[
-        <p>{sourceCard.text}</p>,
-        <p>================</p>,
-        <p>{destinationCard.text}</p>
+      content: [
+        <div dangerouslySetInnerHTML={{__html:`${sourceCard.text} </br> ${destinationCard.text}`}}></div>
+        
       ],
-      onOk() {
-        console.log("OK");
-      },
+      onOk:()=>handleMergeCards(sourceCard, destinationCard,cardsColumn),
       onCancel() {
         console.log("Cancel");
       },
