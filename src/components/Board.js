@@ -246,7 +246,10 @@ const handleMergeCards=(sourceCard, destinationCard,cardsColumn)=>{
   console.log(...filteredDestination,"final card which is merged")//api call to update this
   mergedCard = filteredDestination[0]
    mergedCard.text = `<p>${filteredDestination[0].text}</br> -------</br>${removingCard[0].text}</p>`
-   mergedCard.created_by = `${filteredDestination[0].created_by}, ${removingCard[0].created_by}`
+   if(!filteredDestination[0].created_by.includes(removingCard[0].created_by)){
+    mergedCard.created_by = `${filteredDestination[0].created_by}, ${removingCard[0].created_by}`
+   }
+  
    mergedCard.votes = filteredDestination[0].votes+removingCard[0].votes
   console.log(mergedCard,"mergedCard")
   if(sourceCard.id!== destinationCard.id){
