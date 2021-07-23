@@ -16,7 +16,7 @@ class RetrosController < ApplicationController
   # GET /retros/1 or /retros/1.json
   def show
     @retro = Retro.find_by(slug: params[:slug])
-    render json: @retro, serializer: RetroSerializer  
+    render json: RetroSerializer.new(@retro).serializable_hash(include: :cards)
     p @retro
   end
 

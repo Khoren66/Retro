@@ -5,7 +5,14 @@ class CardsController < ApplicationController
   # GET /cards or /cards.json
   def index
     @cards = Card.all
-    respond_with(@cards)
+    @wells_cards = Card.find_by(card_type: 'wells')
+    @improves_cards = Card.find_by(card_type: 'iproves')
+    @actions_cards = Card.find_by(card_type: 'actions')
+    respond_with(cards:{
+wells: @wells_cards,
+improves: @improves_cards,
+actions: @actions_cards
+    })
   end
 
 
@@ -25,13 +32,18 @@ class CardsController < ApplicationController
   # POST /cards or /cards.json
   def create
     @card = Card.new(card_params)
-    respond_to do |format|
+    retro = Retro.find(card_params['retro_id'])
+    p retro, 'CREATE RETRO=========>>>>>>>'
+     respond_to do |format|
       if @card.save
+        RetrosChannel.broadcast_to(retro,{
+          retro: RetroSerializer.new(retro)
+        })
         format.json { render json: @card, serializer: CardSerializer }
       else
         format.json { render json: @card.errors } 
       end
-    end
+     end
   end
 
   # PATCH/PUT /cards/1 or /cards/1.json

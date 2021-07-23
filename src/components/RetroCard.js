@@ -2,7 +2,6 @@ import React from "react";
 import { Modal } from "antd";
 import Api from "../Api";
 import {
-  EditFilled,
   LikeFilled,
   CloseOutlined,
   ExclamationCircleOutlined,
@@ -44,7 +43,13 @@ const RetroCard = ({
     confirm({
       title: "Are you sure delete this item?",
       icon: <ExclamationCircleOutlined />,
-      content: card.text,
+      content: [
+        <div
+          dangerouslySetInnerHTML={{
+            __html: ` ${card.text}`,
+          }}
+        ></div>,
+      ],
       okText: "Yes",
       okType: "danger",
       cancelText: "No",

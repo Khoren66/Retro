@@ -6,13 +6,12 @@ import {
   CheckCircleFilled,
   CloseCircleFilled,
   UserOutlined,
-  EditFilled,
   ExclamationCircleOutlined,
-  LikeFilled,
 } from "@ant-design/icons";
 import { Typography, Input, Modal, Button } from "antd";
 import Api from "../Api";
 import RetroCard from "./RetroCard";
+import RetroWebSocket from "./RetroWebSocket"
 const { TextArea } = Input;
 const { confirm } = Modal;
 
@@ -38,11 +37,9 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   const result = {};
   result[droppableSource.droppableId] = sourceClone;
   result[droppableDestination.droppableId] = destClone;
-
+console.log(result,"result 42 tox")
   return result;
 };
-
-const grid = 8;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the wells look a bit nicer
@@ -92,18 +89,15 @@ const id2List = {
   dropAction: "actions",
 };
 
-const Board = ({ cards }) => {
-  // const [wellData, setWell] = useState([]);
+const Board = ({ cableApp}) => {
   const [show, setShow] = useState(formVisible);
   const [formWell, setFormWell] = useState(wellDefault);
   const [formImprove, setFormImprove] = useState(improveDefault);
   const [formAction, setFormAction] = useState(actionDefault);
   const [isNameModalVisible, setNameModalVisible] = useState(false);
   const [user, setUserName] = useState({ name: "" });
-  // const [improvesData, setImproves] = useState([]);
-  // const [actions, setActions] = useState([]);
-  const [cardsData, setCards] = useState([]);
-  const { id } = useParams(); /////========>>>
+  // const [cardsData, setCards] = useState();
+  const { id } = useParams();
 
   const [state, setState] = useState({
     wells: [],
@@ -123,20 +117,12 @@ const Board = ({ cards }) => {
     await Api.getRetro(id)
       .get()
       .then((res) => {
-        let well = res.data.cards.filter((item) => item.card_type === "wells");
         let retro_id = res.data.id;
-        //setWell(well);
-        let improves = res.data.cards.filter(
-          (item) => item.card_type === "improves"
-        );
-        //setImproves(improves);
-        let action = res.data.cards.filter(
-          (item) => item.card_type === "actions"
-        );
+
         setState({
-          wells: well,
-          improves: improves,
-          actions: action,
+          wells: res.data.cards_data.wells,
+          improves: res.data.cards_data.improves,
+          actions: res.data.cards_data.actions,
           retro_id: retro_id,
         });
       });
@@ -159,8 +145,8 @@ const Board = ({ cards }) => {
     if (!destination) {
       return;
     }
-    console.log(source.droppableId, "source.droppableId");
-    console.log(destination.droppableId, "destination.droppableId");
+    console.log(source, "source.droppableId");
+    console.log(destination, "destination.droppableId");
     if (source.droppableId === destination.droppableId) {
       const columnCards = reorder(
         getList(source.droppableId),
@@ -169,28 +155,32 @@ const Board = ({ cards }) => {
       );
 
       let stateColumn = { columnCards };
-      // console.log(
-      //   stateColumn,
-      //   "STATE row 133 if (source.droppableId === destination.droppableId) {"
-      // );
 
-      // console.log(
-      //   source,
-      //   "Ssource.droppableId === (source.droppableId === destination.droppableId) {"
-      // );
-
-      if (source.droppableId === "dropImprove" && improves[source.index].id!==improves[destination.index].id) {
-        showConfirm(improves[source.index], improves[destination.index],"improves");
+      if (
+        source.droppableId === "dropImprove" &&
+        improves[source.index].id !== improves[destination.index].id
+      ) {
+        showConfirm(
+          improves[source.index],
+          improves[destination.index],
+          "improves"
+        );
         stateColumn = { improves: columnCards };
-      } else if (source.droppableId === "dropAction" && actions[source.index].id!==actions[destination.index].id) {
-        showConfirm(actions[source.index], actions[destination.index],"actions");
+      } else if (
+        source.droppableId === "dropAction" &&
+        actions[source.index].id !== actions[destination.index].id
+      ) {
+        showConfirm(
+          actions[source.index],
+          actions[destination.index],
+          "actions"
+        );
         stateColumn = { actions: columnCards };
-        // console.log(
-        //   state,
-        //   "STATS in else if(source.droppableId === dropAction"
-        // );
-      } else if(source.droppableId === "dropWell" && wells[source.index].id!== wells[destination.index].id) {
-        showConfirm(wells[source.index], wells[destination.index],"wells");
+      } else if (
+        source.droppableId === "dropWell" &&
+        wells[source.index].id !== wells[destination.index].id
+      ) {
+        showConfirm(wells[source.index], wells[destination.index], "wells");
         stateColumn = { wells: columnCards };
       }
 
@@ -202,20 +192,52 @@ const Board = ({ cards }) => {
         source,
         destination
       );
+      let updatedCard = {}
       console.log(result, "result ==========>>>RESULT");
       if (result.dropWell && result.dropImprove) {
+        console.log(wells[source.index],"=========>>>start")
+        console.log(improves[destination.index],"=========>>>end")
+        console.log(source,"source",destination,"destination")
+        if(source.droppableId==='dropWell'){
+          updatedCard = {...wells[destination.index],card_type:"improves"}
+          console.log(wells[destination.index],"this  card type must be edites to improves")
+          Api.editDeleteCard(wells[destination.index].id).put(updatedCard)
+        }else{
+          updatedCard = {...improves[source.index],card_type:"wells"}
+          console.log(improves[source.index],"this  card type must be edites to well")
+          Api.editDeleteCard(improves[source.index].id).put(updatedCard)
+        }
         setState({
           ...state,
           wells: result.dropWell,
           improves: result.dropImprove,
         });
       } else if (result.dropWell && result.dropAction) {
+        if(source.droppableId==='dropWell'){
+          updatedCard = {...wells[destination.index],card_type:"actions"}
+          console.log(wells[destination.index],"this  card type must be edites to actions")
+          Api.editDeleteCard(wells[source.index].id).put(updatedCard)
+        }else{
+          updatedCard = {...actions[source.index],card_type:"wells"}
+          console.log(actions[source.index],"this  card type must be edites to wells")
+          Api.editDeleteCard(actions[source.index].id).put(updatedCard)
+        }
         setState({
           ...state,
           wells: result.dropWell,
           actions: result.dropAction,
         });
       } else {
+        if(source.droppableId==='dropImprove'){
+          updatedCard = {...improves[source.index],card_type:"actions"}
+          Api.editDeleteCard(improves[source.index].id).put(updatedCard)
+          console.log(improves[source.index],"this  card type must be edites to action")
+        }else{
+          updatedCard = {...actions[destination.index],card_type:"improves"}
+          Api.editDeleteCard(actions[destination.index].id).put(updatedCard)
+          console.log(actions[destination.index],"this  card type must be edites to improves")
+          
+        }
         setState({
           ...state,
           improves: result.dropImprove,
@@ -224,59 +246,74 @@ const Board = ({ cards }) => {
       }
     }
   };
-const handleMergeCards=(sourceCard, destinationCard,cardsColumn)=>{
-  let data = []
-  if(cardsColumn==="wells"){
-    data =wells
-  }else if(cardsColumn==="improves"){
-    data=improves
-  }else{
-    data =actions
-  }
-  let filtered = []
-  let filteredDestination = []
-  let removingCard = []
-  let mergedCard = {}
-  filtered=data.filter((item) => item.id !== sourceCard.id );
-  removingCard=data.filter((item) => item.id === sourceCard.id);
-  filteredDestination= data.filter((item) => item.id === destinationCard.id);
-  //setState({...state,wells:[...wells,fil]})
-  console.log(filtered,"filteredfilteredfilteredfilteredfiltered")
-  console.log(removingCard[0],"removing Card")//api call to remove this
-  console.log(...filteredDestination,"final card which is merged")//api call to update this
-  mergedCard = filteredDestination[0]
-   mergedCard.text = `<p>${filteredDestination[0].text}</br> -------</br>${removingCard[0].text}</p>`
-   if(!filteredDestination[0].created_by.includes(removingCard[0].created_by)){
-    mergedCard.created_by = `${filteredDestination[0].created_by}, ${removingCard[0].created_by}`
-   }
-  
-   mergedCard.votes = filteredDestination[0].votes+removingCard[0].votes
-  console.log(mergedCard,"mergedCard")
-  if(sourceCard.id!== destinationCard.id){
-    if(sourceCard.card_type==='wells' && destinationCard.card_type==="wells" ){
-   
-      setState({...state,wells:[...filtered]})
-      console.log({wells:[...filtered]},"wells ")
+  const handleMergeCards = (sourceCard, destinationCard, cardsColumn) => {
+    let data = [];
+    if (cardsColumn === "wells") {
+      data = wells;
+    } else if (cardsColumn === "improves") {
+      data = improves;
+    } else {
+      data = actions;
     }
-    else if(sourceCard.card_type==='improves' && destinationCard.card_type==="improves"){
-      setState({...state,improves:[...filtered]})
-    }else if(sourceCard.card_type==='actions' && destinationCard.card_type==="actions"){
-      setState({...state,actions:[...filtered]})
-     }
-  }
-  
+    let filtered = [];
+    let filteredDestination = [];
+    let removingCard = [];
+    let mergedCard = {};
+    filtered = data.filter((item) => item.id !== sourceCard.id);
+    removingCard = data.filter((item) => item.id === sourceCard.id);
+    filteredDestination = data.filter((item) => item.id === destinationCard.id);
+    mergedCard = filteredDestination[0];
+    mergedCard.text = `<span>${filteredDestination[0].text}</br> -------</br>${removingCard[0].text}</span>`;
+    if (
+      !filteredDestination[0].created_by.includes(removingCard[0].created_by)
+    ) {
+      console.log("removed dublicates")
+      mergedCard.created_by = `${filteredDestination[0].created_by},${removingCard[0].created_by}`;
+      console.log(mergedCard.created_by.trim(),"========trim")
+      let arraySplit = mergedCard.created_by.trim().split(',')
 
 
-}
-  const showConfirm = (sourceCard, destinationCard,cardsColumn) => {
+      mergedCard.created_by = arraySplit.filter(function(value, index, self) { 
+        return self.indexOf(value) === index;
+    }).join(',')
+    }
+
+    mergedCard.votes = filteredDestination[0].votes + removingCard[0].votes;
+    if (
+      sourceCard.id !== destinationCard.id &&
+      sourceCard.card_type === destinationCard.card_type
+    ) {
+      Api.editDeleteCard(removingCard[0].id)
+        .delete()
+        .then((res) => {
+          if ((res.statusText = "OK")) {
+            Api.editDeleteCard(mergedCard.id)
+              .put(mergedCard)
+              .then((res) => {
+                if ((res.statusText = "OK")) {
+                  setState({ ...state, [cardsColumn]: [...filtered] });
+                }
+              });
+          }
+        })
+        .catch((reqErr) => {
+          console.error(reqErr);
+          console.log(reqErr.res.status);
+        });
+    }
+  };
+  const showConfirm = (sourceCard, destinationCard, cardsColumn) => {
     confirm({
       title: "Do you Want to merge these items?",
       icon: <ExclamationCircleOutlined />,
       content: [
-        <div dangerouslySetInnerHTML={{__html:`${sourceCard.text} </br> ${destinationCard.text}`}}></div>
-        
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `${sourceCard.text} </br> ${destinationCard.text}`,
+          }}
+        ></div>,
       ],
-      onOk:()=>handleMergeCards(sourceCard, destinationCard,cardsColumn),
+      onOk: () => handleMergeCards(sourceCard, destinationCard, cardsColumn),
       onCancel() {
         console.log("Cancel");
       },
@@ -410,6 +447,35 @@ const handleMergeCards=(sourceCard, destinationCard,cardsColumn)=>{
     setUserName({ ...user, [name]: value });
     console.log(user);
   };
+
+
+  const getRetroData = (id) => {
+    Api.getRetro(id).get()
+      .then((result) => {
+        console.log(result);
+      })
+  };
+
+  const updateApp=(newData)=>{
+    console.log(newData.retro.cards)
+    let well = newData.retro.cards.filter((item) => item.card_type === "wells");
+        let retro_id = newData.retro.id;
+        //setWell(well);
+        let improves = newData.retro.cards.filter(
+          (item) => item.card_type === "improves"
+        );
+        //setImproves(improves);
+        let action = newData.retro.cards.filter(
+          (item) => item.card_type === "actions"
+        );
+        setState({
+          wells: well,
+          improves: improves,
+          actions: action,
+          retro_id: retro_id,
+        });
+
+  }
   return (
     <div>
       <Modal
@@ -639,6 +705,13 @@ const handleMergeCards=(sourceCard, destinationCard,cardsColumn)=>{
           </div>
         </DragDropContext>
       </div>
+      <RetroWebSocket
+        cableApp={cableApp}
+        updateApp={updateApp}
+        id={id}
+        getRetroData={getRetroData}
+        // roomData={props.roomData}
+      />
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useHistory } from "react-router-dom";
 import { Modal, Button, Input } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { TeamOutlined, CopyOutlined } from "@ant-design/icons";
@@ -23,7 +22,6 @@ const RetroForm = () => {
     let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
     setUser({user_id:u_id});
   }, []);
-  let history = useHistory();
 
   const showModal = () => {
     setState({
@@ -76,13 +74,17 @@ const RetroForm = () => {
     <div>
       <Button
         type="primary"
-        className="button-radius-bottom"
+        // className="button-radius-bottom"
         style={{
-          background: "#f3f6f7",
-          color: "#3f5b70",
-          height: "50px",
-          width: "200px",
-          fontSize: "20px",
+          
+          background:"#2D89CD",
+          // background: "#f3f6f7",
+          // color: "#3f5b70",
+          // height: "50px",
+          // width: "200px",
+          // fontSize: "20px",
+          marginRight:"4px",
+          borderRadius:"4px"
         }}
         onClick={showModal}
       >

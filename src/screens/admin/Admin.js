@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import RetroEditModal from "../../components/RetroEditModal";
-import RetroForm from "../../components/RetroForm";
-import { LogoutOutlined } from "@ant-design/icons";
+// import RetroForm from "../../components/RetroForm";
+// import { LogoutOutlined } from "@ant-design/icons";
 import "./admin.css";
-import { Typography, Button, Row, Col } from "antd";
 import RetroTable from "../../components/RetroTable";
-import Header from "../../components/Header";
+// import Header from "../../components/Header";
+import HeaderTabs from "../../components/HeaderTabs";
 import Api from "../../Api";
 
 const defaultState = {
   visible: false,
 };
 const defaultRetro = {
-  team_name: "",
   slug:"",
   active: false,
 };
@@ -25,11 +24,7 @@ const Admin = () => {
   const { visible } = modalState;
   useEffect(() => {}, []);
 
-  let history = useHistory();
-  const handleLogOut = () => {
-    history.push("/");
-    localStorage.removeItem("retro");
-  };
+
 
   const handleOk = ({ target: { name, value } }) => {
     console.log({ [name]: value });
@@ -81,21 +76,8 @@ const Admin = () => {
 
   return (
     <div className="admin-wrapper">
-      <Header />
-      <div>
-        <Row>
-          <Col span={8}></Col>
-          <Col className="center" span={8}>
-            <RetroForm />
-          </Col>
-          <Col className="right-end" span={8}>
-            <Button className="log-out" onClick={handleLogOut}>
-              <Typography>Logout</Typography>
-              <LogoutOutlined />
-            </Button>
-          </Col>
-        </Row>
-      </div>
+      <HeaderTabs />
+
       <div className="table-scroll">
         <RetroEditModal
           retro={retro}

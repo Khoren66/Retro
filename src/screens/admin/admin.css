@@ -24,3 +24,16 @@
     height: 92%;
   }
 }
+.tab{
+  font-size: 16px;
+  border-bottom: 4px solid #2D89CD;
+  padding-bottom: 3px;
+}
+.tab-no-line{
+  font-size: 16px;
+}
+.tab-no-line:hover{
+  border-bottom: 4px solid #2D89CD;
+  padding-bottom: 3px;
+  cursor: pointer;
+}

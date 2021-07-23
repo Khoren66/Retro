@@ -2,6 +2,7 @@
     background-color: #ffffff;
     padding: 1rem 1.5rem;
     margin: 0 auto;
+    height: 100vh;
     /* height: 82vh; */
     display: flex;
     justify-content: center

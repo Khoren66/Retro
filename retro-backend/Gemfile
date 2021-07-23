@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.1'
+ruby '2.6.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.4', '>= 5.2.4.3'
+gem 'rails', '~> 6.0'
 gem 'pg'
 gem 'jwt'
 gem 'responders'
@@ -12,8 +12,8 @@ gem 'simple_command'
 gem 'bcrypt', '~> 3.1.7'
 gem 'active_model_serializers'
 gem 'rack-cors', '~> 0.3.1'
-# Use mysql as the database for Active Record
-gem 'mysql2', '>= 0.4.4', '< 0.6.0'
+gem "anycable-rails", "~> 1.1"
+gem "redis", ">= 4.0"
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Use SCSS for stylesheets

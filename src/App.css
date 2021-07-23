@@ -60,7 +60,7 @@ body {
 }
 .prymary-color {
   color: #f3f6f7;
-  background: #3f5b70;
+  background: #2D89CD;
   width: 100%;
   margin-bottom: 5px;
   border-radius: 5px;
@@ -68,12 +68,12 @@ body {
 }
 .prymary-color:hover {
   background: #f3f6f7;
-  color: #3f5b70;
+  color: #2D89CD;
 }
 .prymary-color:active {
-  background-color: #3f5b70;
-  color: #f3f6f7;
-  box-shadow: 0 3px #3f5b70;
+  background-color: #2D89CD;
+  color: #2D89CD;
+  box-shadow: 0 3px #2D89CD;
   /* transform: translateY(4px); */
 }
 .border-color {
@@ -84,6 +84,9 @@ body {
 }
 
 :root {
-  --border-color: rgb(63, 91, 112);
+  --border-color: #2D89CD;
   --main-color: rgb(243, 246, 247);
+}
+p{
+  font-size: 16px;
 }

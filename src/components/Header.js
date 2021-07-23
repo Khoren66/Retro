@@ -1,6 +1,5 @@
-import React, { useEffect,useState } from "react";
-import { Typography, Image } from "antd";
-import Api from '../Api/index.js';
+import React from "react";
+import { Typography } from "antd";
 const { Title } = Typography;
 
 const headerStyle = {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
+// import axios from 'axios';
 import { Table, Anchor } from "antd";
 import {
   ClockCircleOutlined,
-  CheckCircleFilled,
-  CloseCircleFilled,
+  // CheckCircleFilled,
+  // CloseCircleFilled,
   LockFilled,
 } from "@ant-design/icons";
 import Api from "../Api";
@@ -13,7 +13,7 @@ const { Link } = Anchor;
 
 const RetroTable = ({showModal}) => {
   const [retros, setRetros] = useState([]);
-  useEffect(async() => {
+  useEffect(() => {
 
     let u_id = JSON.parse(localStorage.getItem("retro")).user_id;
     Api.retrosByUser(u_id).get().then((res) => {

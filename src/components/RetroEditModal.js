@@ -1,7 +1,7 @@
-import { Modal, Button, Input, Switch, Typography } from "antd";
+import { Modal, Input, Switch, Typography } from "antd";
 import Draggable from "react-draggable";
 import React, { useState } from "react";
-import { TeamOutlined, CopyOutlined } from "@ant-design/icons";
+import { TeamOutlined } from "@ant-design/icons";
 const defaultState = {
   disabled: true,
   bounds: { left: 0, top: 0, bottom: 0, right: 0 },
@@ -17,7 +17,7 @@ const RetroEditModal = ({
   const draggleRef = React.createRef();
   const [state, setState] = useState(defaultState);
   const { bounds, disabled } = state;
-  const { team_name, active, user_id } = retro;
+  const { team_name, active } = retro;
 
   const onStart = (event, uiData) => {
     const { clientWidth, clientHeight } = window?.document?.documentElement;
