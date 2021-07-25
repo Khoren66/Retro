@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal } from "antd";
 import Api from "../Api";
+import CardDropdown from "./CardDropdown"
 import {
   LikeFilled,
   CloseOutlined,
@@ -89,10 +90,15 @@ const RetroCard = ({
       {...provided.dragHandleProps}
       style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
     >
-      <CloseOutlined
-        onClick={() => showDeleteConfirm(item)}
-        className="close-remove-icon"
-      />
+      
+      <div className="close-remove-icon">
+        <CloseOutlined
+        onClick={() => showDeleteConfirm(item)}/>
+        </div>
+      <div className="more-icon">
+      <CardDropdown/>
+      </div>
+    
       <div dangerouslySetInnerHTML={{__html:item.text}}></div>
       <div
         style={{

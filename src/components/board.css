@@ -90,3 +90,10 @@ display: flex;
 justify-content: flex-end;
 color: white;
 }
+.more-icon{
+  display: flex;
+  justify-content: flex-end;
+}
+.more-icon-color{
+  color: white;
+}
