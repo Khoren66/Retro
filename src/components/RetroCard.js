@@ -16,18 +16,11 @@ const RetroCard = ({
   provided,
   getItemStyle,
 }) => {
-  const { actions, wells, improves } = state;
   const { confirm } = Modal;
 
   const handleLike = (card) => {
     let filtered = [];
-    if (card.card_type === "wells") {
-      filtered = wells.filter((item) => item.id !== card.id);
-    } else if (card.card_type === "improves") {
-      filtered = improves.filter((item) => item.id !== card.id);
-    } else {
-      filtered = actions.filter((item) => item.id !== card.id);
-    }
+      filtered = state[card.card_type].filter((item) => item.id !== card.id);
     Api.editDeleteCard(card.id)
       .put({ ...card, votes: card.votes + 1 })
       .then((res) => {
@@ -64,13 +57,7 @@ const RetroCard = ({
   };
   const handleRemoveCard = (card) => {
     let filtered = [];
-    if (card.card_type === "wells") {
-      filtered = wells.filter((item) => item.id !== card.id);
-    } else if (card.card_type === "improves") {
-      filtered = improves.filter((item) => item.id !== card.id);
-    } else {
-      filtered = actions.filter((item) => item.id !== card.id);
-    }
+      filtered = state[card.card_type].filter((item) => item.id !== card.id);
     Api.editDeleteCard(card.id)
       .delete()
       .then((res) => {

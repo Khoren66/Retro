@@ -11,7 +11,7 @@ import {
 import { Typography, Input, Modal, Button } from "antd";
 import Api from "../Api";
 import RetroCard from "./RetroCard";
-import RetroWebSocket from "./RetroWebSocket"
+import RetroWebSocket from "./RetroWebSocket";
 const { TextArea } = Input;
 const { confirm } = Modal;
 
@@ -37,7 +37,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   const result = {};
   result[droppableSource.droppableId] = sourceClone;
   result[droppableDestination.droppableId] = destClone;
-console.log(result,"result 42 tox")
+  console.log(result, "result 42 tox");
   return result;
 };
 
@@ -59,41 +59,48 @@ const getListStyle = (isDraggingOver) => ({
   minHeight: "70vh",
 });
 
-const wellDefault = {
+// const wellDefault = {
+//   created_by: "",
+//   text: "",
+//   card_type: "wells",
+//   votes: 0,
+// };
+const defaultCard={
   created_by: "",
-  text: "",
-  card_type: "wells",
+  // text: "",
+  card_type: "",
   votes: 0,
-};
-const improveDefault = {
-  created_by: "",
-  text: "",
-  card_type: "improves",
-  votes: 0,
-};
-const actionDefault = {
-  created_by: "",
-  text: "",
-  card_type: "actions",
-  votes: 0,
-};
-const formVisible = {
-  wellVisible: false,
-  improveVisible: false,
-  actionVisible: false,
-};
+}
+// const improveDefault = {
+//   created_by: "",
+//   text: "",
+//   card_type: "improves",
+//   votes: 0,
+// };
+// const actionDefault = {
+//   created_by: "",
+//   text: "",
+//   card_type: "actions",
+//   votes: 0,
+// };
+//  const formVisible = {
+//   item: false,
+//   wellVisible: false,
+//   improveVisible: false,
+//   actionVisible: false,
+// };
 
 const id2List = {
-  dropWell: "wells",
-  dropImprove: "improves",
-  dropAction: "actions",
+  wells: "wells",
+  improves: "improves",
+  actions: "actions",
 };
 
-const Board = ({ cableApp}) => {
-  const [show, setShow] = useState(formVisible);
-  const [formWell, setFormWell] = useState(wellDefault);
-  const [formImprove, setFormImprove] = useState(improveDefault);
-  const [formAction, setFormAction] = useState(actionDefault);
+const Board = ({ cableApp }) => {
+  const [show, setShow] = useState({});
+  const [formCard, setFormCard] = useState(defaultCard);
+  // const [formImprove, setFormImprove] = useState(improveDefault);
+  // const [formAction, setFormAction] = useState(actionDefault);
   const [isNameModalVisible, setNameModalVisible] = useState(false);
   const [user, setUserName] = useState({ name: "" });
   // const [cardsData, setCards] = useState();
@@ -114,15 +121,30 @@ const Board = ({ cableApp}) => {
     } else {
       setUserName({ name: user.name });
     }
+    let form = ["wells", "improves", "actions"].map((item) => ({
+      [item]: false,
+    }));
+    console.log(form);
+    setShow(form);
+    // let stateColumns ={}
     await Api.getRetro(id)
       .get()
       .then((res) => {
         let retro_id = res.data.id;
-
+        let stateColumns =  ["wells", "improves", "actions"].map((type) => (
+          {[type]: res.data.cards_data[type]}
+        ))
+        stateColumns = stateColumns.reduce(function(result, item) {
+          var key = Object.keys(item)[0];
+          result[key] = item[key];
+          return result;
+        }, {})
+      
         setState({
-          wells: res.data.cards_data.wells,
-          improves: res.data.cards_data.improves,
-          actions: res.data.cards_data.actions,
+          ...stateColumns,
+          // wells: res.data.cards_data.wells,
+          // improves: res.data.cards_data.improves,
+          // actions: res.data.cards_data.actions,
           retro_id: retro_id,
         });
       });
@@ -157,7 +179,7 @@ const Board = ({ cableApp}) => {
       let stateColumn = { columnCards };
 
       if (
-        source.droppableId === "dropImprove" &&
+        source.droppableId === "improves" &&
         improves[source.index].id !== improves[destination.index].id
       ) {
         showConfirm(
@@ -167,7 +189,7 @@ const Board = ({ cableApp}) => {
         );
         stateColumn = { improves: columnCards };
       } else if (
-        source.droppableId === "dropAction" &&
+        source.droppableId === "actions" &&
         actions[source.index].id !== actions[destination.index].id
       ) {
         showConfirm(
@@ -177,7 +199,7 @@ const Board = ({ cableApp}) => {
         );
         stateColumn = { actions: columnCards };
       } else if (
-        source.droppableId === "dropWell" &&
+        source.droppableId === "wells" &&
         wells[source.index].id !== wells[destination.index].id
       ) {
         showConfirm(wells[source.index], wells[destination.index], "wells");
@@ -192,56 +214,76 @@ const Board = ({ cableApp}) => {
         source,
         destination
       );
-      let updatedCard = {}
+      let updatedCard = {};
       console.log(result, "result ==========>>>RESULT");
-      if (result.dropWell && result.dropImprove) {
-        console.log(wells[source.index],"=========>>>start")
-        console.log(improves[destination.index],"=========>>>end")
-        console.log(source,"source",destination,"destination")
-        if(source.droppableId==='dropWell'){
-          updatedCard = {...wells[destination.index],card_type:"improves"}
-          console.log(wells[destination.index],"this  card type must be edites to improves")
-          Api.editDeleteCard(wells[destination.index].id).put(updatedCard)
-        }else{
-          updatedCard = {...improves[source.index],card_type:"wells"}
-          console.log(improves[source.index],"this  card type must be edites to well")
-          Api.editDeleteCard(improves[source.index].id).put(updatedCard)
+      if (result.wells && result.improves) {
+        console.log(wells[source.index], "=========>>>start");
+        console.log(improves[destination.index], "=========>>>end");
+        console.log(source, "source", destination, "destination");
+        if (source.droppableId === "wells") {
+          updatedCard = { ...wells[destination.index], card_type: "improves" };
+          console.log(
+            wells[destination.index],
+            "this  card type must be edites to improves"
+          );
+          Api.editDeleteCard(wells[destination.index].id).put(updatedCard);
+        } else {
+          updatedCard = { ...improves[source.index], card_type: "wells" };
+          console.log(
+            improves[source.index],
+            "this  card type must be edites to well"
+          );
+          Api.editDeleteCard(improves[source.index].id).put(updatedCard);
         }
         setState({
           ...state,
-          wells: result.dropWell,
-          improves: result.dropImprove,
+          wells: result.wells,
+          improves: result.improves,
         });
-      } else if (result.dropWell && result.dropAction) {
-        if(source.droppableId==='dropWell'){
-          updatedCard = {...wells[destination.index],card_type:"actions"}
-          console.log(wells[destination.index],"this  card type must be edites to actions")
-          Api.editDeleteCard(wells[source.index].id).put(updatedCard)
-        }else{
-          updatedCard = {...actions[source.index],card_type:"wells"}
-          console.log(actions[source.index],"this  card type must be edites to wells")
-          Api.editDeleteCard(actions[source.index].id).put(updatedCard)
+      } else if (result.wells && result.actions) {
+        if (source.droppableId === "wells") {
+          updatedCard = { ...wells[destination.index], card_type: "actions" };
+          console.log(
+            wells[destination.index],
+            "this  card type must be edites to actions"
+          );
+          Api.editDeleteCard(wells[source.index].id).put(updatedCard);
+        } else {
+          updatedCard = { ...actions[source.index], card_type: "wells" };
+          console.log(
+            actions[source.index],
+            "this  card type must be edites to wells"
+          );
+          Api.editDeleteCard(actions[source.index].id).put(updatedCard);
         }
         setState({
           ...state,
-          wells: result.dropWell,
-          actions: result.dropAction,
+          wells: result.wells,
+          actions: result.actions,
         });
       } else {
-        if(source.droppableId==='dropImprove'){
-          updatedCard = {...improves[source.index],card_type:"actions"}
-          Api.editDeleteCard(improves[source.index].id).put(updatedCard)
-          console.log(improves[source.index],"this  card type must be edites to action")
-        }else{
-          updatedCard = {...actions[destination.index],card_type:"improves"}
-          Api.editDeleteCard(actions[destination.index].id).put(updatedCard)
-          console.log(actions[destination.index],"this  card type must be edites to improves")
-          
+        if (source.droppableId === "improves") {
+          updatedCard = { ...improves[source.index], card_type: "actions" };
+          Api.editDeleteCard(improves[source.index].id).put(updatedCard);
+          console.log(
+            improves[source.index],
+            "this  card type must be edites to action"
+          );
+        } else {
+          updatedCard = {
+            ...actions[destination.index],
+            card_type: "improves",
+          };
+          Api.editDeleteCard(actions[destination.index].id).put(updatedCard);
+          console.log(
+            actions[destination.index],
+            "this  card type must be edites to improves"
+          );
         }
         setState({
           ...state,
-          improves: result.dropImprove,
-          actions: result.dropAction,
+          improves: result.improves,
+          actions: result.actions,
         });
       }
     }
@@ -267,15 +309,16 @@ const Board = ({ cableApp}) => {
     if (
       !filteredDestination[0].created_by.includes(removingCard[0].created_by)
     ) {
-      console.log("removed dublicates")
+      console.log("removed dublicates");
       mergedCard.created_by = `${filteredDestination[0].created_by},${removingCard[0].created_by}`;
-      console.log(mergedCard.created_by.trim(),"========trim")
-      let arraySplit = mergedCard.created_by.trim().split(',')
+      console.log(mergedCard.created_by.trim(), "========trim");
+      let arraySplit = mergedCard.created_by.trim().split(",");
 
-
-      mergedCard.created_by = arraySplit.filter(function(value, index, self) { 
-        return self.indexOf(value) === index;
-    }).join(',')
+      mergedCard.created_by = arraySplit
+        .filter(function (value, index, self) {
+          return self.indexOf(value) === index;
+        })
+        .join(",");
     }
 
     mergedCard.votes = filteredDestination[0].votes + removingCard[0].votes;
@@ -319,122 +362,165 @@ const Board = ({ cableApp}) => {
       },
     });
   };
-  const handleAddWellCard = (e) => {
-    console.log(formWell);
+  // const handleAddWellCard = (e,type) => {
+  //   console.log(formCard);
+  //   console.log(type,e)
+  //   if (
+  //     (e.key === "Enter" || !e.key) &&
+  //     formCard.text.length > 0 &&
+  //     !formCard.text.includes("\n")
+  //   ) {
+  //     setShow({ ...show, wellVisible: false });
+  //     console.log({ ...formCard, retro_id, created_by: user.name });
+  //     Api.cards
+  //       .post({ ...formCard, retro_id, created_by: user.name })
+  //       .then((res) => {
+  //         if ((res.statusText = "OK")) {
+  //           setState({ ...state, wells: [...wells, res.data] });
+  //         }
+  //       })
+  //       .catch((reqErr) => {
+  //         console.error(reqErr);
+  //         console.log(reqErr.res.status);
+  //       });
+  //     setFormCard(wellDefault);
+  //   }
+  // };
+
+  const handleAddCard = (e,type) => {
+    
     if (
       (e.key === "Enter" || !e.key) &&
-      formWell.text.length > 0 &&
-      !formWell.text.includes("\n")
+      formCard[`${type}-text`].length > 0 &&
+      !formCard[`${type}-text`].includes("\n")
     ) {
-      setShow({ ...show, wellVisible: false });
-      console.log({ ...formWell, retro_id, created_by: user.name });
-      Api.cards
-        .post({ ...formWell, retro_id, created_by: user.name })
+      setShow({ ...show, [type]: false });
+     let newCard = { ...formCard,text:formCard[`${type}-text`], retro_id, created_by: user.name ,card_type:type }
+       Api.cards
+        .post(newCard)
         .then((res) => {
           if ((res.statusText = "OK")) {
-            setState({ ...state, wells: [...wells, res.data] });
+            setState({ ...state, [type]: [...state[type], res.data] });
           }
         })
         .catch((reqErr) => {
           console.error(reqErr);
           console.log(reqErr.res.status);
         });
-      setFormWell(wellDefault);
+      setFormCard({...formCard,[`${type}-text`]:""});
     }
   };
 
-  const handleAddImproveCard = (e) => {
-    if (
-      (e.key === "Enter" || !e.key) &&
-      formImprove.text.length > 0 &&
-      !formImprove.text.includes("\n")
-    ) {
-      setShow({ ...show, improveVisible: false });
-      Api.cards
-        .post({ ...formImprove, retro_id, created_by: user.name })
-        .then((res) => {
-          if ((res.statusText = "OK")) {
-            setState({ ...state, improves: [...improves, res.data] });
-          }
-        })
-        .catch((reqErr) => {
-          console.error(reqErr);
-          console.log(reqErr.res.status);
-        });
-      setFormImprove(improveDefault);
-    }
+  // const handleAddImproveCard = (e) => {
+  //   if (
+  //     (e.key === "Enter" || !e.key) &&
+  //     formImprove.text.length > 0 &&
+  //     !formImprove.text.includes("\n")
+  //   ) {
+  //     setShow({ ...show, improveVisible: false });
+  //     Api.cards
+  //       .post({ ...formImprove, retro_id, created_by: user.name })
+  //       .then((res) => {
+  //         if ((res.statusText = "OK")) {
+  //           setState({ ...state, improves: [...improves, res.data] });
+  //         }
+  //       })
+  //       .catch((reqErr) => {
+  //         console.error(reqErr);
+  //         console.log(reqErr.res.status);
+  //       });
+  //     setFormImprove(improveDefault);
+  //   }
+  // };
+
+  // const handleAddActionCard = (e) => {
+  //   if (
+  //     (e.key === "Enter" || !e.key) &&
+  //     formAction.text.length > 0 &&
+  //     !formAction.text.includes("\n")
+  //   ) {
+  //     setShow({ ...show, actionVisible: false });
+  //     Api.cards
+  //       .post({ ...formAction, retro_id, created_by: user.name })
+  //       .then((res) => {
+  //         if ((res.statusText = "OK")) {
+  //           setState({ ...state, actions: [...actions, res.data] });
+  //         }
+  //       })
+  //       .catch((reqErr) => {
+  //         console.error(reqErr);
+  //         console.log(reqErr.res.status);
+  //       });
+  //     setFormAction(actionDefault);
+  //   }
+  // };
+
+  // const handleShowWell = () => {
+  //   if (show.wellVisible) {
+  //     setShow({ ...show, wellVisible: false });
+  //     setFormCard(wellDefault);
+  //   } else {
+  //     setShow({ ...show, wellVisible: true });
+  //   }
+  // };
+
+  const handleShowCardForm = (item) => {
+    setShow({...show,[item]:true})
   };
 
-  const handleAddActionCard = (e) => {
-    if (
-      (e.key === "Enter" || !e.key) &&
-      formAction.text.length > 0 &&
-      !formAction.text.includes("\n")
-    ) {
-      setShow({ ...show, actionVisible: false });
-      Api.cards
-        .post({ ...formAction, retro_id, created_by: user.name })
-        .then((res) => {
-          if ((res.statusText = "OK")) {
-            setState({ ...state, actions: [...actions, res.data] });
-          }
-        })
-        .catch((reqErr) => {
-          console.error(reqErr);
-          console.log(reqErr.res.status);
-        });
-      setFormAction(actionDefault);
-    }
+  // const handleShowImprove = () => {
+  //   if (show.improveVisible) {
+  //     setShow({ ...show, improveVisible: false });
+  //     setFormImprove(improveDefault);
+  //   } else {
+  //     setShow({ ...show, improveVisible: true });
+  //   }
+  // };
+  // const handleShowAction = () => {
+  //   if (show.actionVisible) {
+  //     setShow({ ...show, actionVisible: false });
+  //     setFormAction(actionDefault);
+  //   } else {
+  //     setShow({ ...show, actionVisible: true });
+  //   }
+  // };
+
+  // const handleWellChange = ({ target: { name, value } }) => {
+
+  //   setFormCard({ ...formCard, [name]: value });
+  // };
+
+  const handleCardChange = ({ target: { name, value } }) => {
+    setFormCard({ ...formCard, [name]: value });
+    console.log(formCard)
   };
 
-  const handleShowWell = () => {
-    if (show.wellVisible) {
-      setShow({ ...show, wellVisible: false });
-      setFormWell(wellDefault);
-    } else {
-      setShow({ ...show, wellVisible: true });
-    }
-  };
-  const handleShowImprove = () => {
-    if (show.improveVisible) {
-      setShow({ ...show, improveVisible: false });
-      setFormImprove(improveDefault);
-    } else {
-      setShow({ ...show, improveVisible: true });
-    }
-  };
-  const handleShowAction = () => {
-    if (show.actionVisible) {
-      setShow({ ...show, actionVisible: false });
-      setFormAction(actionDefault);
-    } else {
-      setShow({ ...show, actionVisible: true });
-    }
-  };
+  // const handleImproveChange = ({ target: { name, value } }) => {
+  //   setFormImprove({ ...formImprove, [name]: value });
+  // };
 
-  const handleWellChange = ({ target: { name, value } }) => {
-    setFormWell({ ...formWell, [name]: value });
-  };
+  // const handleActionChange = ({ target: { name, value } }) => {
+  //   setFormAction({ ...formAction, [name]: value });
+  // };
 
-  const handleImproveChange = ({ target: { name, value } }) => {
-    setFormImprove({ ...formImprove, [name]: value });
-  };
+  // const handleCloseActionForm = () => {
+  //   setFormAction(actionDefault);
+  //   setShow({ ...show, actionVisible: false });
+  // };
+  // const handleCloseImproveForm = () => {
+  //   setFormImprove(improveDefault);
+  //   setShow({ ...show, improveVisible: false });
+  // };
+  // const handleCloseWellForm = () => {
+  //   setFormCard(wellDefault);
+  //   setShow({ ...show, wellVisible: false });
+  // };
 
-  const handleActionChange = ({ target: { name, value } }) => {
-    setFormAction({ ...formAction, [name]: value });
-  };
-
-  const handleCloseActionForm = () => {
-    setFormAction(actionDefault);
-    setShow({ ...show, actionVisible: false });
-  };
-  const handleCloseImproveForm = () => {
-    setFormImprove(improveDefault);
-    setShow({ ...show, improveVisible: false });
-  };
-  const handleCloseWellForm = () => {
-    setFormWell(wellDefault);
-    setShow({ ...show, wellVisible: false });
+  const handleCloseCardForm = (type) => {
+    console.log(type,"type close")
+    // setFormCard(wellDefault);
+    setShow({ ...show, [type]: false });
+    setFormCard(defaultCard)
   };
 
   const handleNameModalConfirm = () => {
@@ -448,34 +534,33 @@ const Board = ({ cableApp}) => {
     console.log(user);
   };
 
-
   const getRetroData = (id) => {
-    Api.getRetro(id).get()
+    Api.getRetro(id)
+      .get()
       .then((result) => {
         console.log(result);
-      })
+      });
   };
 
-  const updateApp=(newData)=>{
-    console.log(newData.retro.cards)
+  const updateApp = (newData) => {
+    console.log(newData.retro.cards);
     let well = newData.retro.cards.filter((item) => item.card_type === "wells");
-        let retro_id = newData.retro.id;
-        //setWell(well);
-        let improves = newData.retro.cards.filter(
-          (item) => item.card_type === "improves"
-        );
-        //setImproves(improves);
-        let action = newData.retro.cards.filter(
-          (item) => item.card_type === "actions"
-        );
-        setState({
-          wells: well,
-          improves: improves,
-          actions: action,
-          retro_id: retro_id,
-        });
-
-  }
+    let retro_id = newData.retro.id;
+    //setWell(well);
+    let improves = newData.retro.cards.filter(
+      (item) => item.card_type === "improves"
+    );
+    //setImproves(improves);
+    let action = newData.retro.cards.filter(
+      (item) => item.card_type === "actions"
+    );
+    setState({
+      wells: well,
+      improves: improves,
+      actions: action,
+      retro_id: retro_id,
+    });
+  };
   return (
     <div>
       <Modal
@@ -499,7 +584,7 @@ const Board = ({ cableApp}) => {
         />
       </Modal>
       <div className="retro-headers">
-        <div style={{ width: "30%" }}>
+        {/* <div style={{ width: "30%" }}>
           <Typography>
             <h3>Went well</h3>
           </Typography>
@@ -510,8 +595,8 @@ const Board = ({ cableApp}) => {
           >
             {show.wellVisible ? "Close" : "+"}
           </button>
-        </div>
-        <div style={{ width: "30%" }}>
+        </div> */}
+        {/* <div style={{ width: "30%" }}>
           <Typography>
             <h3>To improve</h3>
           </Typography>
@@ -522,8 +607,8 @@ const Board = ({ cableApp}) => {
           >
             {show.improveVisible ? "Close" : "+"}
           </button>
-        </div>
-        <div style={{ width: "30%" }}>
+        </div> */}
+        {/* <div style={{ width: "30%" }}>
           <Typography>
             <h3>Action items</h3>
           </Typography>
@@ -534,64 +619,100 @@ const Board = ({ cableApp}) => {
           >
             {show.actionVisible ? "Close" : "+"}
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="board-columns column-wrapper">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div style={{ width: "30%" }}>
-            <TextArea
-              value={formWell.text}
-              name="text"
-              className="text-field"
-              onKeyDown={handleAddWellCard}
-              onChange={handleWellChange}
-              style={{ display: show.wellVisible ? "inline-block" : "none" }}
-              placeholder="What did go well ?"
-              autoSize={{ minRows: 3, maxRows: 4 }}
-            />
-            <div className="icons-right">
-              <CloseCircleFilled
-                onClick={handleCloseWellForm}
-                style={{ display: show.wellVisible ? "inline-block" : "none" }}
-                className="remove-icon"
-              />
-              <CheckCircleFilled
-                onClick={handleAddWellCard}
-                style={{ display: show.wellVisible ? "inline-block" : "none" }}
-                className="accept-icon"
-              />
-            </div>
-            <Droppable droppableId="dropWell">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
+          {["wells", "improves", "actions"].map((type, index) => (
+            <div style={{ width: "30%" }}>
+              <div>
+                <Typography>
+                  <h3>{type}</h3>
+                </Typography>
+                <button
+                  disabled={show[type]}
+                  onClick={()=>handleShowCardForm(type)}
+                  className={
+                    show[type] ? "disbled-button" : "prymary-color"
+                  }
                 >
-                  {state.wells.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <RetroCard
-                          state={state}
-                          setState={setState}
-                          item={item}
-                          provided={provided}
-                          getItemStyle={getItemStyle}
-                          snapshot={snapshot}
-                        />
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </div>
-          <div style={{ width: "30%" }}>
+                  {show[type] ? "Close" : "+"}
+                </button>
+              </div>
+              <TextArea
+                value={formCard[`${type}-text`]}
+                name={`${type}-text`}
+                className="text-field"
+                onKeyDown={(e)=>handleAddCard(e,type)}
+                onChange={handleCardChange}
+                style={{ display: show[type] ? "inline-block" : "none" }}
+                placeholder="What ?"
+                autoSize={{ minRows: 3, maxRows: 4 }}
+              />
+              <div className="icons-right">
+                <CloseCircleFilled
+                  onClick={()=>handleCloseCardForm(type)}
+                  style={{
+                    display: show[type] ? "inline-block" : "none",
+                  }}
+                  className="remove-icon"
+                />
+                <CheckCircleFilled
+                  onClick={(e)=>handleAddCard(e,type)}
+                  style={{
+                    display: show[type]? "inline-block" : "none",
+                  }}
+                  className="accept-icon"
+                />
+              </div>
+
+              <Droppable droppableId={type}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={getListStyle(snapshot.isDraggingOver)}
+                  >
+                    {state[type].map((item, index) => (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id.toString()}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <RetroCard
+                            state={state}
+                            setState={setState}
+                            item={item}
+                            provided={provided}
+                            getItemStyle={getItemStyle}
+                            snapshot={snapshot}
+                          />
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+          ))}
+
+          {/* <div style={{ width: "30%" }}>
+            <div>
+              <Typography>
+                <h3>To improve</h3>
+              </Typography>
+              <button
+                disabled={show.improveVisible}
+                onClick={handleShowImprove}
+                className={
+                  show.improveVisible ? "disbled-button" : "prymary-color"
+                }
+              >
+                {show.improveVisible ? "Close" : "+"}
+              </button>
+            </div>
             <TextArea
               value={formImprove.text}
               name="text"
@@ -618,7 +739,8 @@ const Board = ({ cableApp}) => {
                 className="accept-icon"
               />
             </div>
-            <Droppable droppableId="dropImprove">
+
+            <Droppable droppableId="improves">
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
@@ -648,6 +770,20 @@ const Board = ({ cableApp}) => {
             </Droppable>
           </div>
           <div style={{ width: "30%" }}>
+            <div>
+              <Typography>
+                <h3>Action items</h3>
+              </Typography>
+              <button
+                disabled={show.actionVisible}
+                onClick={handleShowAction}
+                className={
+                  show.actionVisible ? "disbled-button" : "prymary-color"
+                }
+              >
+                {show.actionVisible ? "Close" : "+"}
+              </button>
+            </div>
             <TextArea
               value={formAction.text}
               name="text"
@@ -674,7 +810,8 @@ const Board = ({ cableApp}) => {
                 className="accept-icon"
               />
             </div>
-            <Droppable droppableId="dropAction">
+
+            <Droppable droppableId="actions">
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
@@ -702,7 +839,7 @@ const Board = ({ cableApp}) => {
                 </div>
               )}
             </Droppable>
-          </div>
+          </div> */}
         </DragDropContext>
       </div>
       <RetroWebSocket

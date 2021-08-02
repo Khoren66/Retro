@@ -74,6 +74,6 @@ actions: @actions_cards
     end
 
     def card_params
-      params.require(:card).permit(:card_type, :text, :created_by,:votes,:retro_id)
+      params.require(:card).permit(:id, :card_type, :text, :created_by,:votes,:retro_id)
     end
 end
