@@ -59,36 +59,12 @@ const getListStyle = (isDraggingOver) => ({
   minHeight: "70vh",
 });
 
-// const wellDefault = {
-//   created_by: "",
-//   text: "",
-//   card_type: "wells",
-//   votes: 0,
-// };
 const defaultCard={
   created_by: "",
   // text: "",
   card_type: "",
   votes: 0,
 }
-// const improveDefault = {
-//   created_by: "",
-//   text: "",
-//   card_type: "improves",
-//   votes: 0,
-// };
-// const actionDefault = {
-//   created_by: "",
-//   text: "",
-//   card_type: "actions",
-//   votes: 0,
-// };
-//  const formVisible = {
-//   item: false,
-//   wellVisible: false,
-//   improveVisible: false,
-//   actionVisible: false,
-// };
 
 const id2List = {
   wells: "wells",
@@ -99,8 +75,6 @@ const id2List = {
 const Board = ({ cableApp }) => {
   const [show, setShow] = useState({});
   const [formCard, setFormCard] = useState(defaultCard);
-  // const [formImprove, setFormImprove] = useState(improveDefault);
-  // const [formAction, setFormAction] = useState(actionDefault);
   const [isNameModalVisible, setNameModalVisible] = useState(false);
   const [user, setUserName] = useState({ name: "" });
   // const [cardsData, setCards] = useState();
@@ -142,9 +116,6 @@ const Board = ({ cableApp }) => {
       
         setState({
           ...stateColumns,
-          // wells: res.data.cards_data.wells,
-          // improves: res.data.cards_data.improves,
-          // actions: res.data.cards_data.actions,
           retro_id: retro_id,
         });
       });
@@ -362,30 +333,6 @@ const Board = ({ cableApp }) => {
       },
     });
   };
-  // const handleAddWellCard = (e,type) => {
-  //   console.log(formCard);
-  //   console.log(type,e)
-  //   if (
-  //     (e.key === "Enter" || !e.key) &&
-  //     formCard.text.length > 0 &&
-  //     !formCard.text.includes("\n")
-  //   ) {
-  //     setShow({ ...show, wellVisible: false });
-  //     console.log({ ...formCard, retro_id, created_by: user.name });
-  //     Api.cards
-  //       .post({ ...formCard, retro_id, created_by: user.name })
-  //       .then((res) => {
-  //         if ((res.statusText = "OK")) {
-  //           setState({ ...state, wells: [...wells, res.data] });
-  //         }
-  //       })
-  //       .catch((reqErr) => {
-  //         console.error(reqErr);
-  //         console.log(reqErr.res.status);
-  //       });
-  //     setFormCard(wellDefault);
-  //   }
-  // };
 
   const handleAddCard = (e,type) => {
     
@@ -411,110 +358,14 @@ const Board = ({ cableApp }) => {
     }
   };
 
-  // const handleAddImproveCard = (e) => {
-  //   if (
-  //     (e.key === "Enter" || !e.key) &&
-  //     formImprove.text.length > 0 &&
-  //     !formImprove.text.includes("\n")
-  //   ) {
-  //     setShow({ ...show, improveVisible: false });
-  //     Api.cards
-  //       .post({ ...formImprove, retro_id, created_by: user.name })
-  //       .then((res) => {
-  //         if ((res.statusText = "OK")) {
-  //           setState({ ...state, improves: [...improves, res.data] });
-  //         }
-  //       })
-  //       .catch((reqErr) => {
-  //         console.error(reqErr);
-  //         console.log(reqErr.res.status);
-  //       });
-  //     setFormImprove(improveDefault);
-  //   }
-  // };
-
-  // const handleAddActionCard = (e) => {
-  //   if (
-  //     (e.key === "Enter" || !e.key) &&
-  //     formAction.text.length > 0 &&
-  //     !formAction.text.includes("\n")
-  //   ) {
-  //     setShow({ ...show, actionVisible: false });
-  //     Api.cards
-  //       .post({ ...formAction, retro_id, created_by: user.name })
-  //       .then((res) => {
-  //         if ((res.statusText = "OK")) {
-  //           setState({ ...state, actions: [...actions, res.data] });
-  //         }
-  //       })
-  //       .catch((reqErr) => {
-  //         console.error(reqErr);
-  //         console.log(reqErr.res.status);
-  //       });
-  //     setFormAction(actionDefault);
-  //   }
-  // };
-
-  // const handleShowWell = () => {
-  //   if (show.wellVisible) {
-  //     setShow({ ...show, wellVisible: false });
-  //     setFormCard(wellDefault);
-  //   } else {
-  //     setShow({ ...show, wellVisible: true });
-  //   }
-  // };
-
   const handleShowCardForm = (item) => {
     setShow({...show,[item]:true})
   };
-
-  // const handleShowImprove = () => {
-  //   if (show.improveVisible) {
-  //     setShow({ ...show, improveVisible: false });
-  //     setFormImprove(improveDefault);
-  //   } else {
-  //     setShow({ ...show, improveVisible: true });
-  //   }
-  // };
-  // const handleShowAction = () => {
-  //   if (show.actionVisible) {
-  //     setShow({ ...show, actionVisible: false });
-  //     setFormAction(actionDefault);
-  //   } else {
-  //     setShow({ ...show, actionVisible: true });
-  //   }
-  // };
-
-  // const handleWellChange = ({ target: { name, value } }) => {
-
-  //   setFormCard({ ...formCard, [name]: value });
-  // };
 
   const handleCardChange = ({ target: { name, value } }) => {
     setFormCard({ ...formCard, [name]: value });
     console.log(formCard)
   };
-
-  // const handleImproveChange = ({ target: { name, value } }) => {
-  //   setFormImprove({ ...formImprove, [name]: value });
-  // };
-
-  // const handleActionChange = ({ target: { name, value } }) => {
-  //   setFormAction({ ...formAction, [name]: value });
-  // };
-
-  // const handleCloseActionForm = () => {
-  //   setFormAction(actionDefault);
-  //   setShow({ ...show, actionVisible: false });
-  // };
-  // const handleCloseImproveForm = () => {
-  //   setFormImprove(improveDefault);
-  //   setShow({ ...show, improveVisible: false });
-  // };
-  // const handleCloseWellForm = () => {
-  //   setFormCard(wellDefault);
-  //   setShow({ ...show, wellVisible: false });
-  // };
 
   const handleCloseCardForm = (type) => {
     console.log(type,"type close")
@@ -584,42 +435,6 @@ const Board = ({ cableApp }) => {
         />
       </Modal>
       <div className="retro-headers">
-        {/* <div style={{ width: "30%" }}>
-          <Typography>
-            <h3>Went well</h3>
-          </Typography>
-          <button
-            disabled={show.wellVisible}
-            onClick={handleShowWell}
-            className={show.wellVisible ? "disbled-button" : "prymary-color"}
-          >
-            {show.wellVisible ? "Close" : "+"}
-          </button>
-        </div> */}
-        {/* <div style={{ width: "30%" }}>
-          <Typography>
-            <h3>To improve</h3>
-          </Typography>
-          <button
-            disabled={show.improveVisible}
-            onClick={handleShowImprove}
-            className={show.improveVisible ? "disbled-button" : "prymary-color"}
-          >
-            {show.improveVisible ? "Close" : "+"}
-          </button>
-        </div> */}
-        {/* <div style={{ width: "30%" }}>
-          <Typography>
-            <h3>Action items</h3>
-          </Typography>
-          <button
-            disabled={show.actionVisible}
-            onClick={handleShowAction}
-            className={show.actionVisible ? "disbled-button" : "prymary-color"}
-          >
-            {show.actionVisible ? "Close" : "+"}
-          </button>
-        </div> */}
       </div>
 
       <div className="board-columns column-wrapper">
@@ -697,149 +512,6 @@ const Board = ({ cableApp }) => {
               </Droppable>
             </div>
           ))}
-
-          {/* <div style={{ width: "30%" }}>
-            <div>
-              <Typography>
-                <h3>To improve</h3>
-              </Typography>
-              <button
-                disabled={show.improveVisible}
-                onClick={handleShowImprove}
-                className={
-                  show.improveVisible ? "disbled-button" : "prymary-color"
-                }
-              >
-                {show.improveVisible ? "Close" : "+"}
-              </button>
-            </div>
-            <TextArea
-              value={formImprove.text}
-              name="text"
-              className="text-field"
-              onKeyDown={handleAddImproveCard}
-              onChange={handleImproveChange}
-              style={{ display: show.improveVisible ? "inline-block" : "none" }}
-              placeholder="What should be improved ?"
-              autoSize={{ minRows: 3, maxRows: 4 }}
-            />
-            <div className="icons-right">
-              <CloseCircleFilled
-                onClick={handleCloseImproveForm}
-                style={{
-                  display: show.improveVisible ? "inline-block" : "none",
-                }}
-                className="remove-icon"
-              />
-              <CheckCircleFilled
-                onClick={handleAddImproveCard}
-                style={{
-                  display: show.improveVisible ? "inline-block" : "none",
-                }}
-                className="accept-icon"
-              />
-            </div>
-
-            <Droppable droppableId="improves">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
-                >
-                  {state.improves.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <RetroCard
-                          state={state}
-                          setState={setState}
-                          item={item}
-                          provided={provided}
-                          getItemStyle={getItemStyle}
-                          snapshot={snapshot}
-                        />
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </div>
-          <div style={{ width: "30%" }}>
-            <div>
-              <Typography>
-                <h3>Action items</h3>
-              </Typography>
-              <button
-                disabled={show.actionVisible}
-                onClick={handleShowAction}
-                className={
-                  show.actionVisible ? "disbled-button" : "prymary-color"
-                }
-              >
-                {show.actionVisible ? "Close" : "+"}
-              </button>
-            </div>
-            <TextArea
-              value={formAction.text}
-              name="text"
-              className="text-field"
-              style={{ display: show.actionVisible ? "inline-block" : "none" }}
-              onKeyDown={handleAddActionCard}
-              onChange={handleActionChange}
-              placeholder="What are we going to do ?"
-              autoSize={{ minRows: 3, maxRows: 4 }}
-            />
-            <div className="icons-right">
-              <CloseCircleFilled
-                onClick={handleCloseActionForm}
-                style={{
-                  display: show.actionVisible ? "inline-block" : "none",
-                }}
-                className="remove-icon"
-              />
-              <CheckCircleFilled
-                onClick={handleAddActionCard}
-                style={{
-                  display: show.actionVisible ? "inline-block" : "none",
-                }}
-                className="accept-icon"
-              />
-            </div>
-
-            <Droppable droppableId="actions">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
-                >
-                  {state.actions.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <RetroCard
-                          state={state}
-                          setState={setState}
-                          item={item}
-                          provided={provided}
-                          getItemStyle={getItemStyle}
-                          snapshot={snapshot}
-                        />
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </div> */}
         </DragDropContext>
       </div>
       <RetroWebSocket
