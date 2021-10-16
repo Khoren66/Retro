@@ -4,15 +4,10 @@ class CardsController < ApplicationController
   respond_to :html
   # GET /cards or /cards.json
   def index
-    @cards = Card.all
-    @wells_cards = Card.find_by(card_type: 'wells')
-    @improves_cards = Card.find_by(card_type: 'iproves')
-    @actions_cards = Card.find_by(card_type: 'actions')
-    respond_with(cards:{
-wells: @wells_cards,
-improves: @improves_cards,
-actions: @actions_cards
-    })
+    @cards_by_retro = Card.where(retro_id: card_params[:retro_id])
+    respond_to do |format|
+      format.json { render json: @cards_by_retro}
+    end
   end
 
 
